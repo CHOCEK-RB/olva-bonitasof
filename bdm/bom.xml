@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<businessObjectModel xmlns="http://documentation.bonitasoft.com/bdm-xml-schema/1.0" modelVersion="1.0">
+    <businessObjects>
+        <businessObject qualifiedName="com.company.model.PaqueteLogisticaInversa">
+            <fields>
+                <field type="STRING" length="255" name="idTracking" nullable="false" collection="false">
+                    <description>Código de barras / identificador único del paquete.</description>
+                </field>
+                <field type="STRING" length="255" name="decisionRemitente" nullable="true" collection="false">
+                    <description>Guardará desicion "Reintento" o "Devolución".</description>
+                </field>
+                <field type="STRING" length="255" name="estadoEnvio" nullable="true" collection="false">
+                    <description>Trazabilidad ("Intento fallido", "En custodia", etc.).</description>
+                </field>
+                <field type="STRING" length="255" name="nroDevolucion" nullable="true" collection="false"/>
+            </fields>
+            <uniqueConstraints/>
+            <queries/>
+            <indexes/>
+        </businessObject>
+    </businessObjects>
+</businessObjectModel>
