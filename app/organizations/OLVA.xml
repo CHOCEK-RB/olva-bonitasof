@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ASCII"?>
+<organization:Organization xmlns:organization="http://documentation.bonitasoft.com/organization-xml-schema/1.1">
+  <customUserInfoDefinitions/>
+  <users>
+    <user userName="usuario1">
+      <firstName>Repartidor</firstName>
+      <lastName>Olva</lastName>
+      <personalData/>
+      <professionalData/>
+      <password encrypted="false">123</password>
+      <customUserInfoValues/>
+    </user>
+    <user userName="usuario2">
+      <firstName>Almacenista</firstName>
+      <lastName>Olva</lastName>
+      <personalData/>
+      <professionalData/>
+      <password encrypted="false">123</password>
+      <customUserInfoValues/>
+    </user>
+    <user userName="usuario3">
+      <firstName>Atencion</firstName>
+      <lastName>Olva</lastName>
+      <personalData/>
+      <professionalData/>
+      <password encrypted="false">123</password>
+      <customUserInfoValues/>
+    </user>
+  </users>
+  <roles>
+    <role name="Repartidor">
+      <displayName>repartidor</displayName>
+    </role>
+    <role name="Almacenista">
+      <displayName>almacenista</displayName>
+    </role>
+    <role name="AtencionCliente">
+      <displayName>atencion_cliente</displayName>
+    </role>
+  </roles>
+  <groups>
+    <group name="Olva">
+      <displayName>Olva</displayName>
+    </group>
+  </groups>
+  <memberships>
+    <membership>
+      <userName>usuario2</userName>
+      <roleName>Almacenista</roleName>
+      <groupName>Olva</groupName>
+    </membership>
+    <membership>
+      <userName>usuario3</userName>
+      <roleName>AtencionCliente</roleName>
+      <groupName>Olva</groupName>
+    </membership>
+    <membership>
+      <userName>usuario1</userName>
+      <roleName>Repartidor</roleName>
+      <groupName>Olva</groupName>
+    </membership>
+  </memberships>
+</organization:Organization>
