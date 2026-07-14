@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:connectorconfiguration="http://www.bonitasoft.org/model/connector/configuration" xmlns:decision="http://www.bonitasoft.org/ns/bpm/process/decision" xmlns:expression="http://www.bonitasoft.org/ns/bpm/expression" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:process="http://www.bonitasoft.org/ns/bpm/process">
-  <process:MainProcess xmi:id="_nKx3EG1HEfGFvIBFhOqB5w" name="MiDiagrama" bonitaModelVersion="9">
+  <process:MainProcess xmi:id="_nKx3EG1HEfGFvIBFhOqB5w" name="customer-service" bonitaModelVersion="9">
     <elements xmi:type="process:Pool" xmi:id="_nKx3EW1HEfGFvIBFhOqB5w" name="Proceso de Gestión de Reclamos">
       <elements xmi:type="process:Lane" xmi:id="_nKx3Em1HEfGFvIBFhOqB5w" name="Cliente" actor="_P_qhsG1PEfGFvIBFhOqB5w">
         <elements xmi:type="process:StartEvent" xmi:id="_nKx3E21HEfGFvIBFhOqB5w" name="Inicio de Reclamo" outgoing="_2zc4gG8dEfGgjsG-ztl8Nw">
@@ -37,6 +37,9 @@
             <inputs xmi:type="process:ContractInput" xmi:id="_40Nc0G1QEfGFvIBFhOqB5w" name="reclamoVarInput" type="COMPLEX" dataReference="reclamoVar" createMode="false">
               <inputs xmi:type="process:ContractInput" xmi:id="_40Nc0W1QEfGFvIBFhOqB5w" name="articuloProhibido" type="BOOLEAN" createMode="false"/>
             </inputs>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_29AlMHVUEfGkzq9efzNXtg" expression="return reclamoVarInput.articuloProhibido != null" errorMessage="Debe confirmar si el paquete contenía un artículo prohibido." name="validarArticuloProhibido">
+              <inputNames>reclamoVarInput</inputNames>
+            </constraints>
           </contract>
           <expectedDuration xmi:type="expression:Expression" xmi:id="_zLk6DG1IEfGFvIBFhOqB5w" name="" content="" returnType="java.lang.Long" returnTypeFixed="true"/>
         </elements>
@@ -246,6 +249,9 @@
             <inputs xmi:type="process:ContractInput" xmi:id="_L08UEG1XEfGFvIBFhOqB5w" name="reclamoVarInput" type="COMPLEX" dataReference="reclamoVar" createMode="false">
               <inputs xmi:type="process:ContractInput" xmi:id="_L08UEW1XEfGFvIBFhOqB5w" name="dictamenOperaciones" createMode="false"/>
             </inputs>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="___cPAHVUEfGkzq9efzNXtg" expression="return reclamoVarInput.dictamenOperaciones != null &amp;&amp; !reclamoVarInput.dictamenOperaciones.trim().isEmpty()" errorMessage="Debe ingresar el detalle del dictamen de operaciones." name="validarDictamen">
+              <inputNames>reclamoVarInput</inputNames>
+            </constraints>
           </contract>
           <expectedDuration xmi:type="expression:Expression" xmi:id="_Iu5RjG1JEfGFvIBFhOqB5w" name="" content="" returnType="java.lang.Long" returnTypeFixed="true"/>
         </elements>
@@ -302,6 +308,9 @@
             <inputs xmi:type="process:ContractInput" xmi:id="_-XW9kG8XEfGgjsG-ztl8Nw" name="tipoDevolucionInput">
               <mapping xmi:type="process:ContractInputMapping" xmi:id="_-XW9kW8XEfGgjsG-ztl8Nw"/>
             </inputs>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_x2JOgHVTEfGkzq9efzNXtg" expression="return tipoDevolucionInput == &quot;Flete&quot; || tipoDevolucionInput == &quot;Nota de Crédito&quot;" errorMessage="Debe seleccionar Flete o Nota de Crédito." name="validarOpcionDevolucion">
+              <inputNames>tipoDevolucionInput</inputNames>
+            </constraints>
           </contract>
           <expectedDuration xmi:type="expression:Expression" xmi:id="_G7Wa221KEfGFvIBFhOqB5w" name="" content="" returnType="java.lang.Long" returnTypeFixed="true"/>
         </elements>
@@ -352,6 +361,9 @@
             <inputs xmi:type="process:ContractInput" xmi:id="_Th8BQHU0EfGKnvRhvJRGAg" name="codigoOperacion">
               <mapping xmi:type="process:ContractInputMapping" xmi:id="_Th8BQXU0EfGKnvRhvJRGAg"/>
             </inputs>
+            <constraints xmi:type="process:ContractConstraint" xmi:id="_cNTBUHVUEfGkzq9efzNXtg" expression="return codigoOperacion != null &amp;&amp; !codigoOperacion.trim().isEmpty()" errorMessage="El código de operación contable es obligatorio." name="validarCodigoObligatorio">
+              <inputNames>codigoOperacion</inputNames>
+            </constraints>
           </contract>
           <expectedDuration xmi:type="expression:Expression" xmi:id="_UqrRm21KEfGFvIBFhOqB5w" name="" content="" returnType="java.lang.Long" returnTypeFixed="true"/>
         </elements>
@@ -634,7 +646,7 @@
             </children>
             <children xmi:type="notation:Shape" xmi:id="_1zJDh29IEfGjyPnck1rwvA" type="3027" element="_1zH1YG9IEfGjyPnck1rwvA" fontName="Segoe UI" fillColor="14334392" lineColor="10710316">
               <children xmi:type="notation:DecorationNode" xmi:id="_1zJqkG9IEfGjyPnck1rwvA" type="5017"/>
-              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_1zJDiG9IEfGjyPnck1rwvA" x="535" y="92" width="140" height="68"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_1zJDiG9IEfGjyPnck1rwvA" x="535" y="92" width="157" height="76"/>
             </children>
             <children xmi:type="notation:Shape" xmi:id="_56M2QHUsEfGKnvRhvJRGAg" type="3027" element="_56DFQHUsEfGKnvRhvJRGAg" fontName="Segoe UI" fillColor="14334392" lineColor="10710316">
               <children xmi:type="notation:DecorationNode" xmi:id="_56M2QnUsEfGKnvRhvJRGAg" type="5017"/>
