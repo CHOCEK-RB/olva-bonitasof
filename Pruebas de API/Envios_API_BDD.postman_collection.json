@@ -1,0 +1,57 @@
+{
+  "info": {
+    "_postman_id": "a9d7b4c2-5e4a-4b11-9a99-b1d5c2e9b8f2",
+    "name": "Envios API BDD - OLVA (Base)",
+    "description": "Pruebas BDD base para el Integrante 1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Registro y Recepción de Envíos",
+      "item": [
+        {
+          "name": "GIVEN que existen envios WHEN listar todos THEN retorna una lista de envios",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"THEN el status code es 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"THEN retorna un arreglo de envios\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/envios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "envios"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081"
+    }
+  ]
+}
