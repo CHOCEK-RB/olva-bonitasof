@@ -11,15 +11,16 @@ import java.util.List;
 @RequestMapping("/api/envios")
 public class EnvioController {
 
-    private final IEnvioService envioService;
+  private final IEnvioService envioService;
 
-    public EnvioController(IEnvioService envioService) {
-        this.envioService = envioService;
-    }
+  public EnvioController(IEnvioService envioService) {
+    this.envioService = envioService;
+  }
 
-    // GIVEN una solicitud WHEN llamo a GET /api/envios THEN devuelve todos los envios
-    @GetMapping
-    public ResponseEntity<List<EnvioResponseDTO>> listarEnvios() {
-        return ResponseEntity.ok(envioService.listarEnvios());
-    }
+  // GIVEN una solicitud WHEN llamo a GET /api/envios THEN devuelve todos los
+  // envios
+  @GetMapping
+  public ResponseEntity<List<EnvioResponseDTO>> listarEnvios() {
+    return ResponseEntity.ok(envioService.listarEnvios());
+  }
 }

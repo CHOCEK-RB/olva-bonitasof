@@ -4,5 +4,5 @@ import com.olva.enviosapi.application.dto.EnvioResponseDTO;
 import java.util.List;
 
 public interface IEnvioService {
-    List<EnvioResponseDTO> listarEnvios();
+  List<EnvioResponseDTO> listarEnvios();
 }
