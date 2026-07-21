@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a9d7b4c2-5e4a-4b11-9a99-b1d5c2e9b8f2",
     "name": "Envios API BDD - OLVA (Base)",
-    "description": "Pruebas BDD base para el Integrante 1",
+    "description": "Pruebas BDD para la API de Registro y Recepci\u00f3n de Env\u00edos de OLVA",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -40,6 +40,46 @@
               "path": [
                 "api",
                 "envios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GIVEN id de envio WHEN generar rotulo THEN retorna numero de tracking generado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"THEN el status code es 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"THEN devuelve tracking y cambia a En red\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.numeroTracking).to.include(\"OLVA-\");",
+                  "    pm.expect(jsonData.estadoEnvio).to.eql(\"En red\");",
+                  "    pm.environment.set(\"numero_tracking\", jsonData.numeroTracking);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/envios/{{envio_id}}/generar-rotulo",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "envios",
+                "{{envio_id}}",
+                "generar-rotulo"
               ]
             }
           },
