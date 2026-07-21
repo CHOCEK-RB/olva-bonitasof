@@ -1,10 +1,10 @@
 {
-  "id" : "newForm",
-  "name" : "newForm",
+  "id" : "SolicitudEnvio",
+  "name" : "SolicitudEnvio",
   "type" : "form",
   "uuid" : "aafbff73-88c7-4944-8346-1a3f178de83a",
   "modelVersion" : "2.6",
-  "lastUpdate" : 1781127023698,
+  "lastUpdate" : 1782878123197,
   "description" : "Page generated with Bonita UI designer",
   "rows" : [
     [
@@ -169,7 +169,7 @@
                   },
                   "value" : {
                     "type" : "variable",
-                    "value" : "formInput.remitente.tipoDocumento"
+                    "value" : "formInput.clienteInput.tipoDocumento"
                   }
                 },
                 "reference" : "e0e6802d-7c5b-4f39-aa3d-ed662e547ce5",
@@ -234,7 +234,7 @@
                   },
                   "value" : {
                     "type" : "variable",
-                    "value" : "formInput.remitente.dni"
+                    "value" : "formInput.clienteInput.numeroDocumento"
                   },
                   "debounce" : {
                     "type" : "constant",
@@ -320,7 +320,7 @@
                   },
                   "value" : {
                     "type" : "variable",
-                    "value" : "formInput.remitente.nombres"
+                    "value" : "formInput.clienteInput.nombres"
                   },
                   "debounce" : {
                     "type" : "constant",
@@ -406,7 +406,7 @@
                   },
                   "value" : {
                     "type" : "variable",
-                    "value" : "formInput.remitente.apellidos"
+                    "value" : "formInput.clienteInput.apellidos"
                   },
                   "debounce" : {
                     "type" : "constant",
@@ -488,11 +488,11 @@
                   },
                   "placeholder" : {
                     "type" : "interpolation",
-                    "value" : "formInput.remitente.telefono"
+                    "value" : ""
                   },
                   "value" : {
                     "type" : "variable",
-                    "value" : "formInput.remitente.telefono"
+                    "value" : "formInput.clienteInput.telefono"
                   },
                   "debounce" : {
                     "type" : "constant",
@@ -578,7 +578,7 @@
                   },
                   "value" : {
                     "type" : "variable",
-                    "value" : "formInput.remitente.correo"
+                    "value" : "formInput.clienteInput.correo"
                   },
                   "debounce" : {
                     "type" : "constant",
@@ -662,7 +662,7 @@
                   },
                   "value" : {
                     "type" : "variable",
-                    "value" : "formInput.datosPaquete.peso"
+                    "value" : "formInput.paqueteInput.peso"
                   },
                   "debounce" : {
                     "type" : "constant",
@@ -746,7 +746,7 @@
                   },
                   "value" : {
                     "type" : "variable",
-                    "value" : "formInput.datosPaquete.largo"
+                    "value" : "formInput.paqueteInput.largo"
                   },
                   "debounce" : {
                     "type" : "constant",
@@ -832,7 +832,7 @@
                   },
                   "value" : {
                     "type" : "variable",
-                    "value" : "formInput.datosPaquete.ancho"
+                    "value" : "formInput.paqueteInput.ancho"
                   },
                   "debounce" : {
                     "type" : "constant",
@@ -916,7 +916,7 @@
                   },
                   "value" : {
                     "type" : "variable",
-                    "value" : "formInput.datosPaquete.alto"
+                    "value" : "formInput.paqueteInput.alto"
                   },
                   "debounce" : {
                     "type" : "constant",
@@ -1001,7 +1001,8 @@
                     "type" : "interpolation"
                   },
                   "value" : {
-                    "type" : "variable"
+                    "type" : "variable",
+                    "value" : "formInput.paqueteInput.valorDeclarado"
                   },
                   "debounce" : {
                     "type" : "constant",
@@ -1090,7 +1091,7 @@
                   },
                   "value" : {
                     "type" : "variable",
-                    "value" : "formInput.datosPaquete.direccionOrigen"
+                    "value" : "formInput.paqueteInput.direccionOrigen"
                   }
                 },
                 "reference" : "856fb24f-1d57-44a5-b826-1e32dfbf6263",
@@ -1157,7 +1158,7 @@
                   },
                   "value" : {
                     "type" : "variable",
-                    "value" : "formInput.datosPaquete.direccionDestino"
+                    "value" : "formInput.paqueteInput.direccionDestino"
                   },
                   "debounce" : {
                     "type" : "constant",
@@ -1214,7 +1215,7 @@
                   },
                   "dataToSend" : {
                     "type" : "expression",
-                    "value" : "formOutput"
+                    "value" : "formInput"
                   },
                   "dataFromError" : {
                     "type" : "variable",
@@ -1320,7 +1321,7 @@
                   },
                   "text" : {
                     "type" : "interpolation",
-                    "value" : "<strong>Debug message</strong>\n<br/>\n{{formOutput._submitError.message}}\n{{submit_errors_list}}"
+                    "value" : "{{formInput}}"
                   },
                   "alignment" : {
                     "type" : "constant",
@@ -1406,7 +1407,10 @@
     "formInput" : {
       "type" : "json",
       "value" : [
-        "{}"
+        "{",
+        "    \"clienteInput\": {},",
+        "    \"paqueteInput\": {}",
+        "}"
       ],
       "exposed" : false
     },
@@ -1414,6 +1418,29 @@
       "type" : "json",
       "value" : [
         "[\"Lima\", \"Arequipa\", \"Trujillo\", \"Cusco\", \"Piura\", \"Chiclayo\"]"
+      ],
+      "exposed" : false
+    },
+    "dataToSend" : {
+      "type" : "expression",
+      "value" : [
+        "return {",
+        "    \"clienteInput\": {",
+        "        \"tipoDocumento\": $data.formInput.clienteInput.tipoDocumento,",
+        "        \"numeroDocumento\": $data.formInput.clienteInput.dni,",
+        "        \"nombres\": $data.formInput.clienteInput.nombres,",
+        "        \"apellidos\": $data.formInput.clienteInput.apellidos",
+        "    },",
+        "    \"paqueteInput\": {",
+        "        \"peso\": $data.formInput.paqueteInput.peso,",
+        "        \"largo\": $data.formInput.paqueteInput.largo,",
+        "        \"ancho\": $data.formInput.paqueteInput.ancho,",
+        "        \"alto\": $data.formInput.paqueteInput.alto,",
+        "        \"valorDeclarado\": $data.formInput.paqueteInput.valorDeclarado,",
+        "        \"direccionOrigen\": $data.formInput.paqueteInput.direccionOrigen,",
+        "        \"direccionDestino\": $data.formInput.paqueteInput.direccionDestino",
+        "    }",
+        "};"
       ],
       "exposed" : false
     }

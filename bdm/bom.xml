@@ -37,8 +37,33 @@
                 <field type="STRING" length="255" name="numeroTracking" nullable="true" collection="false"/>
                 <field type="STRING" length="255" name="estadoEnvio" nullable="false" collection="false"/>
                 <field type="STRING" length="255" name="comprobantePago" nullable="true" collection="false"/>
+                <field type="STRING" length="255" name="observacionesPaquete" nullable="true" collection="false"/>
                 <relationField type="AGGREGATION" reference="com.company.model.Cliente" fetchType="LAZY" name="remitente" nullable="true" collection="false"/>
                 <relationField type="AGGREGATION" reference="com.company.model.Paquete" fetchType="LAZY" name="datosPaquete" nullable="false" collection="false"/>
+            </fields>
+            <uniqueConstraints/>
+            <queries/>
+            <indexes/>
+        </businessObject>
+        <businessObject qualifiedName="com.company.model1.BusinessObject">
+            <fields>
+                <field type="STRING" length="255" name="myAttribute" nullable="true" collection="false"/>
+            </fields>
+            <uniqueConstraints/>
+            <queries/>
+            <indexes/>
+        </businessObject>
+        <businessObject qualifiedName="com.company.model2.BusinessObject1">
+            <fields>
+                <field type="STRING" length="255" name="myAttribute" nullable="true" collection="false"/>
+            </fields>
+            <uniqueConstraints/>
+            <queries/>
+            <indexes/>
+        </businessObject>
+        <businessObject qualifiedName="com.company.model3.BusinessObject2">
+            <fields>
+                <field type="STRING" length="255" name="myAttribute" nullable="true" collection="false"/>
             </fields>
             <uniqueConstraints/>
             <queries/>
