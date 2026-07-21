@@ -23,4 +23,12 @@ public class EnvioController {
   public ResponseEntity<List<EnvioResponseDTO>> listarEnvios() {
     return ResponseEntity.ok(envioService.listarEnvios());
   }
+
+  // GIVEN un envio id WHEN llamo a PUT /api/envios/{id}/generar-rotulo THEN
+  // asigna OLVA-XXXX
+  @PutMapping("/{id}/generar-rotulo")
+  public ResponseEntity<EnvioResponseDTO> generarRotulo(@PathVariable String id) {
+      EnvioResponseDTO response = envioService.generarRotuloTracking(id);
+      return ResponseEntity.ok(response);
+  }  
 }
