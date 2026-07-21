@@ -2,6 +2,9 @@ package com.olva.enviosapi.presentation.controller;
 
 import com.olva.enviosapi.application.dto.EnvioResponseDTO;
 import com.olva.enviosapi.application.service.IEnvioService;
+import com.olva.enviosapi.application.dto.EnvioRequestDTO;
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,11 +27,20 @@ public class EnvioController {
     return ResponseEntity.ok(envioService.listarEnvios());
   }
 
+    // GIVEN un Payload de Envio WHEN llamo a POST /api/envios THEN devuelve estado
+  // Recibido
+  @PostMapping
+  public ResponseEntity<EnvioResponseDTO> registrarEnvio(@Valid @RequestBody EnvioRequestDTO request) {
+    EnvioResponseDTO response = envioService.registrarEnvio(request);
+    return ResponseEntity.ok(response);
+  }
+  
   // GIVEN un envio id WHEN llamo a PUT /api/envios/{id}/generar-rotulo THEN
   // asigna OLVA-XXXX
   @PutMapping("/{id}/generar-rotulo")
   public ResponseEntity<EnvioResponseDTO> generarRotulo(@PathVariable String id) {
       EnvioResponseDTO response = envioService.generarRotuloTracking(id);
       return ResponseEntity.ok(response);
-  }  
+  }
+  
 }

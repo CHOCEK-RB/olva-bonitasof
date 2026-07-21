@@ -1,9 +1,11 @@
 package com.olva.enviosapi.application.service;
-
-import com.olva.enviosapi.application.dto.EnvioResponseDTO;
 import java.util.List;
+
+import com.olva.enviosapi.application.dto.EnvioRequestDTO;
+import com.olva.enviosapi.application.dto.EnvioResponseDTO;
 
 public interface IEnvioService {
   List<EnvioResponseDTO> listarEnvios();
-  EnvioResponseDTO generarRotuloTracking(String id);
+  EnvioResponseDTO generarRotuloTracking(String id); 
+  EnvioResponseDTO registrarEnvio(EnvioRequestDTO request);
 }

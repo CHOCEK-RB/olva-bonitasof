@@ -1,10 +1,12 @@
 package com.olva.enviosapi.application.service;
 
+import com.olva.enviosapi.application.dto.EnvioRequestDTO;
 import com.olva.enviosapi.application.dto.EnvioResponseDTO;
 import com.olva.enviosapi.domain.model.RegistroEnvio;
 import com.olva.enviosapi.domain.repository.IRegistroEnvioRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -24,6 +26,26 @@ public class EnvioServiceImpl implements IEnvioService {
     return repository.findAll().stream()
         .map(envio -> mapToDTO(envio, "Listado de envio"))
         .collect(Collectors.toList());
+  }
+  @Override
+  public EnvioResponseDTO registrarEnvio(EnvioRequestDTO request) {
+    double monto = request.getDatosPaquete().getPeso() * 5.0 +
+        (request.getDatosPaquete().getValorDeclarado() != null ? request.getDatosPaquete().getValorDeclarado() * 0.01
+            : 0);
+
+    RegistroEnvio envio = RegistroEnvio.builder()
+        .fechaRegistro(LocalDate.now())
+        .tipoPago(request.getTipoPago())
+        .montoTotal(monto)
+        .pagoConfirmado(false)
+        .estadoEnvio("Recibido")
+        .remitente(request.getRemitente())
+        .datosPaquete(request.getDatosPaquete())
+        .build();
+
+    envio = repository.save(envio);
+
+    return mapToDTO(envio, "Envio registrado con exito. Pendiente de pago y rotulado.");
   }
 
   @Override

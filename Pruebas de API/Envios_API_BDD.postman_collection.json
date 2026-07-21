@@ -46,6 +46,115 @@
           "response": []
         },
         {
+          "name": "GIVEN datos validos WHEN registrar envio THEN retorna envio guardado con id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"THEN el status code es 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"THEN retorna un ID de envio y estado Recibido\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.not.be.undefined;",
+                  "    pm.expect(jsonData.estadoEnvio).to.eql(\"Recibido\");",
+                  "    pm.environment.set(\"envio_id\", jsonData.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Generar DNI aleatorio de 8 digitos",
+                  "pm.variables.set(\"randomDNI\", Math.floor(10000000 + Math.random() * 90000000).toString());",
+                  "",
+                  "// Generar Telefono aleatorio de 9 digitos",
+                  "pm.variables.set(\"randomPhone\", Math.floor(900000000 + Math.random() * 99999999).toString());",
+                  "",
+                  "// Nombres y correos usando variables dinamicas nativas de Faker en Postman",
+                  "pm.variables.set(\"randomFirstName\", pm.variables.replaceIn('{{$randomFirstName}}'));",
+                  "pm.variables.set(\"randomLastName\", pm.variables.replaceIn('{{$randomLastName}}'));",
+                  "pm.variables.set(\"randomEmail\", pm.variables.replaceIn('{{$randomEmail}}'));",
+                  "pm.variables.set(\"randomCity\", pm.variables.replaceIn('{{$randomCity}}'));",
+                  "",
+                  "// Generar Peso aleatorio (positivo)",
+                  "pm.variables.set(\"randomPeso\", (Math.random() * 20 + 1).toFixed(2));"
+                ]
+              }
+            }
+          ],
+                    "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoPago\": \"Fisico\",\n  \"remitente\": {\n    \"tipoDocumento\": \"DNI\",\n    \"numeroDocumento\": \"{{randomDNI}}\",\n    \"nombres\": \"{{randomFirstName}}\",\n    \"apellidos\": \"{{randomLastName}}\",\n    \"telefono\": \"{{randomPhone}}\",\n    \"correo\": \"{{randomEmail}}\"\n  },\n  \"datosPaquete\": {\n    \"peso\": {{randomPeso}},\n    \"largo\": 10.0,\n    \"ancho\": 20.0,\n    \"alto\": 15.0,\n    \"valorDeclarado\": 100.0,\n    \"direccionOrigen\": \"Lima\",\n    \"direccionDestino\": \"{{randomCity}}\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/envios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "envios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GIVEN peso y dimensiones negativas WHEN registrar envio THEN retorna error 400",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"THEN el status code es 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoPago\": \"Fisico\",\n  \"remitente\": {\n    \"tipoDocumento\": \"DNI\",\n    \"numeroDocumento\": \"72345678\",\n    \"nombres\": \"Juan\",\n    \"apellidos\": \"Perez\",\n    \"telefono\": \"987654321\",\n    \"correo\": \"juan@example.com\"\n  },\n  \"datosPaquete\": {\n    \"peso\": -5.0,\n    \"largo\": -10.0,\n    \"ancho\": 20.0,\n    \"alto\": 15.0,\n    \"valorDeclarado\": -100.0,\n    \"direccionOrigen\": \"Lima\",\n    \"direccionDestino\": \"Arequipa\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/envios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "envios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "GIVEN id de envio WHEN generar rotulo THEN retorna numero de tracking generado",
           "event": [
             {
