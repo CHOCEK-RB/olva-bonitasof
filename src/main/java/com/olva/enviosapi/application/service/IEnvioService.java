@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface IEnvioService {
   List<EnvioResponseDTO> listarEnvios();
+  EnvioResponseDTO generarRotuloTracking(String id);
 }
