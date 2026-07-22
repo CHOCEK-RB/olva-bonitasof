@@ -53,5 +53,44 @@ class EnvioServiceImplTest {
     assertEquals("Recibido", response.getEstadoEnvio());
   }
 
+  @Test
+  void confirmarPago_CuandoExiste_DeberiaActualizarBanderaYRetornarResponse() {
+    // 1. GIVEN: dado ID de envío válido que no ha sido pagado
+    String envioId = "12345";
+    RegistroEnvio mockEnvio = RegistroEnvio.builder()
+            .id(envioId)
+            .pagoConfirmado(false)
+            .estadoEnvio("Recibido")
+            .build();
+
+    // mock: db encuentra el envio y lo guarda
+    when(repository.findById(envioId)).thenReturn(java.util.Optional.of(mockEnvio));
+    when(repository.save(any(RegistroEnvio.class))).thenReturn(mockEnvio);
+
+    // 2. WHEN: entonces llamamos al método financiero confirmarPago
+    EnvioResponseDTO response = envioService.confirmarPago(envioId);
+
+    // 3. THEN: entonces esperamos que el pago esté en 'true' y retorne exito
+    assertNotNull(response);
+    assertEquals(true, response.getPagoConfirmado());
+    assertEquals("Pago confirmado exitosamente.", response.getMensaje());
+  }
+
+  @Test
+  void confirmarPago_CuandoIdNoExiste_DeberiaRetornarMensajeDeError() {
+    // 1. GIVEN: dado un ID que no existe en la base de datos
+    String idFalso = "99999";
+
+    // mock repository busca ID pero devuelve vacio
+    when(repository.findById(idFalso)).thenReturn(java.util.Optional.empty());
+
+    // 2. WHEN: cuando llamamos al método
+    EnvioResponseDTO response = envioService.confirmarPago(idFalso);
+
+    // 3. THEN: entonces retorna solo el mensaje de error y no actualizar nada
+    assertNotNull(response);
+    assertEquals("ID de envio no encontrado", response.getMensaje());
+  }
+
 }
 
