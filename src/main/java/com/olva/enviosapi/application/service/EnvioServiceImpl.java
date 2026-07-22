@@ -67,6 +67,20 @@ public class EnvioServiceImpl implements IEnvioService {
     return mapToDTO(envio, "Rotulo y tracking generados correctamente.");
   }
 
+  @Override
+  public EnvioResponseDTO confirmarPago(String id) {
+    Optional<RegistroEnvio> envioOpt = repository.findById(id);
+    if (envioOpt.isEmpty()) {
+      return EnvioResponseDTO.builder().mensaje("ID de envio no encontrado").build();
+    }
+
+    RegistroEnvio envio = envioOpt.get();
+    envio.setPagoConfirmado(true);
+    repository.save(envio);
+
+    return mapToDTO(envio, "Pago confirmado exitosamente.");
+  }
+
   private EnvioResponseDTO mapToDTO(RegistroEnvio envio, String mensaje) {
     return EnvioResponseDTO.builder()
         .id(envio.getId())

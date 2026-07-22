@@ -43,4 +43,10 @@ public class EnvioController {
       return ResponseEntity.ok(response);
   }
   
+  // GIVEN un envio id WHEN llamo a PUT /api/envios/{id}/pago THEN retorna pagoConfirmado true
+  @PutMapping("/{id}/pago")
+  public ResponseEntity<EnvioResponseDTO> confirmarPago(@PathVariable String id) {
+      EnvioResponseDTO response = envioService.confirmarPago(id);
+      return ResponseEntity.ok(response);
+  }
 }

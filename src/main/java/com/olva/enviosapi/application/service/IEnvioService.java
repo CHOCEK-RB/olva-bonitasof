@@ -8,4 +8,5 @@ public interface IEnvioService {
   List<EnvioResponseDTO> listarEnvios();
   EnvioResponseDTO generarRotuloTracking(String id); 
   EnvioResponseDTO registrarEnvio(EnvioRequestDTO request);
+  EnvioResponseDTO confirmarPago(String id);
 }
