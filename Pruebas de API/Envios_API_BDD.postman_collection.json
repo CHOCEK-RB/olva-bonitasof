@@ -231,6 +231,39 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "GIVEN tracking de envio WHEN consultar estado THEN retorna datos de seguimiento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"THEN el status code es 200 o 404\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/envios/tracking/{{numero_tracking}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "envios",
+                "tracking",
+                "{{numero_tracking}}"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     }

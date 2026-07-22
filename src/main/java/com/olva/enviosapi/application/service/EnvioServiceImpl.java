@@ -21,11 +21,14 @@ public class EnvioServiceImpl implements IEnvioService {
 
   private final IRegistroEnvioRepository repository;
   private final IEnvioRepository envioRepository;
+  private final org.springframework.amqp.rabbit.core.RabbitTemplate rabbitTemplate;
 
   public EnvioServiceImpl(IRegistroEnvioRepository repository,
-                          IEnvioRepository envioRepository) {
+      IEnvioRepository envioRepository,
+      org.springframework.amqp.rabbit.core.RabbitTemplate rabbitTemplate) {
     this.repository = repository;
     this.envioRepository = envioRepository;
+    this.rabbitTemplate = rabbitTemplate;
   }
 
   @Override
@@ -34,6 +37,7 @@ public class EnvioServiceImpl implements IEnvioService {
         .map(envio -> mapToDTO(envio, "Listado de envio"))
         .collect(Collectors.toList());
   }
+
   @Override
   public EnvioResponseDTO registrarEnvio(EnvioRequestDTO request) {
     double monto = request.getDatosPaquete().getPeso() * 5.0 +
@@ -42,7 +46,8 @@ public class EnvioServiceImpl implements IEnvioService {
 
     RegistroEnvio envio = RegistroEnvio.builder()
         .fechaRegistro(LocalDate.now())
-        .tipoPago(request.getTipoPago())
+        .tipoPago(
+            request.getTipoPago() != null && !request.getTipoPago().isBlank() ? request.getTipoPago() : "Pendiente")
         .montoTotal(monto)
         .pagoConfirmado(false)
         .estadoEnvio("Recibido")
@@ -89,18 +94,57 @@ public class EnvioServiceImpl implements IEnvioService {
   }
 
   @Override
+  public EnvioResponseDTO recepcionEnvio(String id, com.olva.enviosapi.application.dto.RecepcionRequestDTO request) {
+    Optional<RegistroEnvio> envioOpt = repository.findById(id);
+    if (envioOpt.isEmpty()) {
+      return EnvioResponseDTO.builder().mensaje("ID de envio no encontrado").build();
+    }
+
+    RegistroEnvio envio = envioOpt.get();
+    envio.setTipoPago(request.getTipoPago());
+    envio.setObservacionesPaquete(request.getObservacionesPaquete());
+
+    repository.save(envio);
+
+    return mapToDTO(envio, "Recepcion completada. Datos actualizados en ventanilla.");
+  }
+
+  @Override
+  public EnvioResponseDTO despacharEnvio(String id) {
+    Optional<RegistroEnvio> envioOpt = repository.findById(id);
+    if (envioOpt.isEmpty()) {
+      throw new RuntimeException("ID de envio no encontrado: " + id);
+    }
+
+    RegistroEnvio envio = envioOpt.get();
+
+    // Crear un Map para enviar como JSON
+    java.util.Map<String, Object> mensajeAmqp = new java.util.HashMap<>();
+    mensajeAmqp.put("envioId", envio.getId());
+    mensajeAmqp.put("numeroTracking", envio.getNumeroTracking());
+    mensajeAmqp.put("mensaje", "Paquete despachado y listo para clasificación");
+
+    rabbitTemplate.convertAndSend(
+        com.olva.enviosapi.application.config.RabbitMQConfig.EXCHANGE_NAME, 
+        com.olva.enviosapi.application.config.RabbitMQConfig.ROUTING_KEY, 
+        mensajeAmqp
+    );
+
+    return mapToDTO(envio, "Paquete despachado. Notificación enviada a RabbitMQ.");
+  }
+
+  @Override
   public EnvioTrackingResponse consultarEstado(String numeroTracking) {
     Envio envio = envioRepository.buscarPorNumeroTracking(numeroTracking)
-            .orElseThrow(() -> new EnvioNoEncontradoException(numeroTracking));
+        .orElseThrow(() -> new EnvioNoEncontradoException(numeroTracking));
 
     return new EnvioTrackingResponse(
-            envio.getNumeroTracking(),
-            envio.getEstado(),
-            envio.getOrigen(),
-            envio.getDestino(),
-            envio.getUbicacionActual(),
-            envio.getFechaEntregaEstimada()
-    );
+        envio.getNumeroTracking(),
+        envio.getEstado(),
+        envio.getOrigen(),
+        envio.getDestino(),
+        envio.getUbicacionActual(),
+        envio.getFechaEntregaEstimada());
   }
 
   private EnvioResponseDTO mapToDTO(RegistroEnvio envio, String mensaje) {

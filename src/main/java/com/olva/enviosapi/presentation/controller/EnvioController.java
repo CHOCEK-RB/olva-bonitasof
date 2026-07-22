@@ -30,27 +30,44 @@ public class EnvioController {
     return ResponseEntity.ok(envioService.listarEnvios());
   }
 
-    // GIVEN un Payload de Envio WHEN llamo a POST /api/envios THEN devuelve estado
+  // GIVEN un Payload de Envio WHEN llamo a POST /api/envios THEN devuelve estado
   // Recibido
   @PostMapping
   public ResponseEntity<EnvioResponseDTO> registrarEnvio(@Valid @RequestBody EnvioRequestDTO request) {
     EnvioResponseDTO response = envioService.registrarEnvio(request);
     return ResponseEntity.ok(response);
   }
-  
+
   // GIVEN un envio id WHEN llamo a PUT /api/envios/{id}/generar-rotulo THEN
   // asigna OLVA-XXXX
   @PutMapping("/{id}/generar-rotulo")
   public ResponseEntity<EnvioResponseDTO> generarRotulo(@PathVariable String id) {
-      EnvioResponseDTO response = envioService.generarRotuloTracking(id);
-      return ResponseEntity.ok(response);
+    EnvioResponseDTO response = envioService.generarRotuloTracking(id);
+    return ResponseEntity.ok(response);
   }
-  
-  // GIVEN un envio id WHEN llamo a PUT /api/envios/{id}/pago THEN retorna pagoConfirmado true
+
+  // GIVEN un envio id y DTO WHEN llamo a PUT /api/envios/{id}/recepcion THEN
+  // actualiza pago y observaciones
+  @PutMapping("/{id}/recepcion")
+  public ResponseEntity<EnvioResponseDTO> recepcionEnvio(@PathVariable String id,
+      @Valid @RequestBody com.olva.enviosapi.application.dto.RecepcionRequestDTO request) {
+    EnvioResponseDTO response = envioService.recepcionEnvio(id, request);
+    return ResponseEntity.ok(response);
+  }
+
+  // GIVEN un envio id WHEN llamo a POST /api/envios/{id}/despachar THEN publica evento en RabbitMQ
+  @PostMapping("/{id}/despachar")
+  public ResponseEntity<EnvioResponseDTO> despacharEnvio(@PathVariable String id) {
+    EnvioResponseDTO response = envioService.despacharEnvio(id);
+    return ResponseEntity.ok(response);
+  }
+
+  // GIVEN un envio id WHEN llamo a PUT /api/envios/{id}/pago THEN retorna
+  // pagoConfirmado true
   @PutMapping("/{id}/pago")
   public ResponseEntity<EnvioResponseDTO> confirmarPago(@PathVariable String id) {
-      EnvioResponseDTO response = envioService.confirmarPago(id);
-      return ResponseEntity.ok(response);
+    EnvioResponseDTO response = envioService.confirmarPago(id);
+    return ResponseEntity.ok(response);
   }
 
   @GetMapping("/tracking/{tracking}")

@@ -25,7 +25,7 @@ public class RegistroEnvio {
   private String numeroTracking;
   private String estadoEnvio;
   private String comprobantePago;
-
+  private String observacionesPaquete;
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "cliente_id")
   private Cliente remitente;

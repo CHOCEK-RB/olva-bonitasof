@@ -4,13 +4,11 @@ import com.olva.enviosapi.domain.model.Cliente;
 import com.olva.enviosapi.domain.model.Paquete;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class EnvioRequestDTO {
-  @NotBlank(message = "El tipo de pago es obligatorio")
   private String tipoPago;
 
   @Valid

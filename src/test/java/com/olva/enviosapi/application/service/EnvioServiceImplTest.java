@@ -36,6 +36,9 @@ class EnvioServiceImplTest {
   @Mock
   private IEnvioRepository envioRepository;
 
+  @Mock
+  private org.springframework.amqp.rabbit.core.RabbitTemplate rabbitTemplate;
+
   @InjectMocks
   private EnvioServiceImpl envioService;
 
@@ -45,17 +48,17 @@ class EnvioServiceImplTest {
     request.setTipoPago("Fisico");
 
     Paquete paquete = Paquete.builder()
-            .peso(2.5)
-            .valorDeclarado(100.0)
-            .build();
+        .peso(2.5)
+        .valorDeclarado(100.0)
+        .build();
     request.setDatosPaquete(paquete);
     request.setRemitente(new Cliente());
 
     RegistroEnvio mockEnvio = RegistroEnvio.builder()
-            .id("12345")
-            .estadoEnvio("Recibido")
-            .montoTotal(13.5)
-            .build();
+        .id("12345")
+        .estadoEnvio("Recibido")
+        .montoTotal(13.5)
+        .build();
 
     when(repository.save(any(RegistroEnvio.class))).thenReturn(mockEnvio);
 
@@ -70,10 +73,10 @@ class EnvioServiceImplTest {
   void confirmarPago_CuandoExiste_DeberiaActualizarBanderaYRetornarResponse() {
     String envioId = "12345";
     RegistroEnvio mockEnvio = RegistroEnvio.builder()
-            .id(envioId)
-            .pagoConfirmado(false)
-            .estadoEnvio("Recibido")
-            .build();
+        .id(envioId)
+        .pagoConfirmado(false)
+        .estadoEnvio("Recibido")
+        .build();
 
     when(repository.findById(envioId)).thenReturn(Optional.of(mockEnvio));
     when(repository.save(any(RegistroEnvio.class))).thenReturn(mockEnvio);
@@ -103,17 +106,16 @@ class EnvioServiceImplTest {
     // ---------- GIVEN (Precondiciones / Valores de prueba) ----------
     String numeroTracking = "TRK-2026-00123";
     Envio envioExistente = new Envio(
-            numeroTracking,
-            EstadoEnvio.EN_TRANSITO,
-            "Arequipa",
-            "Lima",
-            "Centro de distribución - Ica",
-            LocalDateTime.of(2026, 7, 20, 9, 0),
-            LocalDateTime.of(2026, 7, 24, 18, 0)
-    );
+        numeroTracking,
+        EstadoEnvio.EN_TRANSITO,
+        "Arequipa",
+        "Lima",
+        "Centro de distribución - Ica",
+        LocalDateTime.of(2026, 7, 20, 9, 0),
+        LocalDateTime.of(2026, 7, 24, 18, 0));
 
     when(envioRepository.buscarPorNumeroTracking(numeroTracking))
-            .thenReturn(Optional.of(envioExistente));
+        .thenReturn(Optional.of(envioExistente));
 
     // ---------- WHEN (Acción / caso de uso ejecutado) ----------
     EnvioTrackingResponse resultado = envioService.consultarEstado(numeroTracking);
@@ -136,11 +138,10 @@ class EnvioServiceImplTest {
   void consultarEstado_CuandoNoExiste_DeberiaLanzarExcepcion() {
     String trackingInexistente = "TRK-NO-EXISTE";
     when(envioRepository.buscarPorNumeroTracking(trackingInexistente))
-            .thenReturn(Optional.empty());
+        .thenReturn(Optional.empty());
 
     assertThrows(
-            EnvioNoEncontradoException.class,
-            () -> envioService.consultarEstado(trackingInexistente)
-    );
+        EnvioNoEncontradoException.class,
+        () -> envioService.consultarEstado(trackingInexistente));
   }
 }
