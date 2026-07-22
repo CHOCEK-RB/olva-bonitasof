@@ -2,7 +2,11 @@ package com.olva.enviosapi.application.service;
 
 import com.olva.enviosapi.application.dto.EnvioRequestDTO;
 import com.olva.enviosapi.application.dto.EnvioResponseDTO;
+import com.olva.enviosapi.application.dto.EnvioTrackingResponse;
+import com.olva.enviosapi.application.excepcion.EnvioNoEncontradoException;
+import com.olva.enviosapi.domain.model.Envio;
 import com.olva.enviosapi.domain.model.RegistroEnvio;
+import com.olva.enviosapi.domain.repository.IEnvioRepository;
 import com.olva.enviosapi.domain.repository.IRegistroEnvioRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +20,12 @@ import java.util.stream.Collectors;
 public class EnvioServiceImpl implements IEnvioService {
 
   private final IRegistroEnvioRepository repository;
+  private final IEnvioRepository envioRepository;
 
-  public EnvioServiceImpl(IRegistroEnvioRepository repository) {
+  public EnvioServiceImpl(IRegistroEnvioRepository repository,
+                          IEnvioRepository envioRepository) {
     this.repository = repository;
+    this.envioRepository = envioRepository;
   }
 
   @Override
@@ -79,6 +86,21 @@ public class EnvioServiceImpl implements IEnvioService {
     repository.save(envio);
 
     return mapToDTO(envio, "Pago confirmado exitosamente.");
+  }
+
+  @Override
+  public EnvioTrackingResponse consultarEstado(String numeroTracking) {
+    Envio envio = envioRepository.buscarPorNumeroTracking(numeroTracking)
+            .orElseThrow(() -> new EnvioNoEncontradoException(numeroTracking));
+
+    return new EnvioTrackingResponse(
+            envio.getNumeroTracking(),
+            envio.getEstado(),
+            envio.getOrigen(),
+            envio.getDestino(),
+            envio.getUbicacionActual(),
+            envio.getFechaEntregaEstimada()
+    );
   }
 
   private EnvioResponseDTO mapToDTO(RegistroEnvio envio, String mensaje) {
