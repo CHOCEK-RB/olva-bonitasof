@@ -193,6 +193,44 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "GIVEN id de envio WHEN confirmar pago THEN retorna pagoConfirmado true",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"THEN el status code es 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"THEN retorna pagoConfirmado true\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.pagoConfirmado).to.eql(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/envios/{{envio_id}}/pago",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "envios",
+                "{{envio_id}}",
+                "pago"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     }
