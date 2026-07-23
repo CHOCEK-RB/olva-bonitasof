@@ -33,4 +33,6 @@ public class RegistroEnvio {
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "paquete_id")
   private Paquete datosPaquete;
+
+  private String loteId;
 }

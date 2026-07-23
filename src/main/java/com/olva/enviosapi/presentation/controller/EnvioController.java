@@ -76,6 +76,13 @@ public class EnvioController {
     return ResponseEntity.ok(respuesta);
   }
 
+  @PutMapping("/tracking/{tracking}/destino")
+  public ResponseEntity<Void> actualizarDestino(@PathVariable("tracking") String tracking,
+      @RequestBody com.olva.enviosapi.application.dto.DestinoRequest request) {
+    envioService.actualizarDestino(tracking, request.getDireccionDestino());
+    return ResponseEntity.ok().build();
+  }
+
   @ExceptionHandler(EnvioNoEncontradoException.class)
   public ResponseEntity<String> manejarEnvioNoEncontrado(EnvioNoEncontradoException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());

@@ -135,16 +135,27 @@ public class EnvioServiceImpl implements IEnvioService {
 
   @Override
   public EnvioTrackingResponse consultarEstado(String numeroTracking) {
-    Envio envio = envioRepository.buscarPorNumeroTracking(numeroTracking)
+    RegistroEnvio envio = repository.findByNumeroTracking(numeroTracking)
         .orElseThrow(() -> new EnvioNoEncontradoException(numeroTracking));
 
     return new EnvioTrackingResponse(
+        0L,
         envio.getNumeroTracking(),
-        envio.getEstado(),
-        envio.getOrigen(),
-        envio.getDestino(),
-        envio.getUbicacionActual(),
-        envio.getFechaEntregaEstimada());
+        null,
+        envio.getDatosPaquete() != null ? envio.getDatosPaquete().getDireccionOrigen() : "",
+        envio.getDatosPaquete() != null ? envio.getDatosPaquete().getDireccionDestino() : "",
+        "Almacén",
+        null);
+  }
+
+  @Override
+  public void actualizarDestino(String numeroTracking, String nuevoDestino) {
+    RegistroEnvio envio = repository.findByNumeroTracking(numeroTracking)
+        .orElseThrow(() -> new EnvioNoEncontradoException(numeroTracking));
+    if (envio.getDatosPaquete() != null) {
+        envio.getDatosPaquete().setDireccionDestino(nuevoDestino);
+        repository.save(envio);
+    }
   }
 
   private EnvioResponseDTO mapToDTO(RegistroEnvio envio, String mensaje) {

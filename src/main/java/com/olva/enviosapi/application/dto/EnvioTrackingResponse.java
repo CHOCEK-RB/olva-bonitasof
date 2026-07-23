@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 public class EnvioTrackingResponse {
 
+  private final Long envioId;
   private final String numeroTracking;
   private final EstadoEnvio estado;
   private final String origen;
@@ -13,15 +14,20 @@ public class EnvioTrackingResponse {
   private final String ubicacionActual;
   private final LocalDateTime fechaEntregaEstimada;
 
-  public EnvioTrackingResponse(String numeroTracking, EstadoEnvio estado, String origen,
+  public EnvioTrackingResponse(Long envioId, String numeroTracking, EstadoEnvio estado, String origen,
       String destino, String ubicacionActual,
       LocalDateTime fechaEntregaEstimada) {
+    this.envioId = envioId;
     this.numeroTracking = numeroTracking;
     this.estado = estado;
     this.origen = origen;
     this.destino = destino;
     this.ubicacionActual = ubicacionActual;
     this.fechaEntregaEstimada = fechaEntregaEstimada;
+  }
+
+  public Long getEnvioId() {
+    return envioId;
   }
 
   public String getNumeroTracking() {

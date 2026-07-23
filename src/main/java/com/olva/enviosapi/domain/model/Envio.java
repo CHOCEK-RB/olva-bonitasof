@@ -33,6 +33,9 @@ public class Envio {
   @Column(name = "fecha_entrega_estimada")
   private LocalDateTime fechaEntregaEstimada;
 
+  @Column(name = "lote_id")
+  private String loteId;
+
   protected Envio() {
     // Constructor vacío requerido por JPA
   }
@@ -68,6 +71,10 @@ public class Envio {
     return destino;
   }
 
+  public void setDestino(String destino) {
+    this.destino = destino;
+  }
+
   public String getUbicacionActual() {
     return ubicacionActual;
   }
@@ -83,5 +90,13 @@ public class Envio {
   public void actualizarEstado(EstadoEnvio nuevoEstado, String nuevaUbicacion) {
     this.estado = nuevoEstado;
     this.ubicacionActual = nuevaUbicacion;
+  }
+
+  public String getLoteId() {
+    return loteId;
+  }
+
+  public void setLoteId(String loteId) {
+    this.loteId = loteId;
   }
 }

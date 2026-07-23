@@ -21,4 +21,6 @@ public interface IEnvioService {
   EnvioResponseDTO despacharEnvio(String id);
 
   EnvioTrackingResponse consultarEstado(String numeroTracking);
+
+  void actualizarDestino(String numeroTracking, String nuevoDestino);
 }
