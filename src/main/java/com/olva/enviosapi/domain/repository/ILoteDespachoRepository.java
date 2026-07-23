@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface ILoteDespachoRepository extends JpaRepository<LoteDespacho, String> {
-    Optional<LoteDespacho> findByRutaDestinoAndEstado(String rutaDestino, String estado);
+  Optional<LoteDespacho> findByRutaDestinoAndEstado(String rutaDestino, String estado);
 }

@@ -1,6 +1,7 @@
 package com.olva.enviosapi.application.almacen.messaging;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,13 +17,8 @@ import java.util.regex.Pattern;
 @Component
 public class AlmacenRabbitConsumer {
 
-  private final RestTemplate restTemplate;
-  // URL base de Bonita Studio por defecto
+  private final RestTemplate restTemplate = new RestTemplate();
   private final String BONITA_URL = "http://localhost:8080/bonita";
-
-  public AlmacenRabbitConsumer() {
-    this.restTemplate = new RestTemplate();
-  }
 
   @RabbitListener(queues = "almacen_queue")
   public void procesarMensajeAlmacen(Map<String, Object> mensaje) {
@@ -43,7 +39,6 @@ public class AlmacenRabbitConsumer {
   }
 
   private void instanciarProcesoBonita(String tracking) {
-    // 1. Login en Bonita para obtener Cookies (X-Bonita-API-Token y JSESSIONID)
     String loginUrl = BONITA_URL + "/loginservice";
 
     HttpHeaders loginHeaders = new HttpHeaders();
@@ -76,9 +71,6 @@ public class AlmacenRabbitConsumer {
       throw new RuntimeException("No se encontró X-Bonita-API-Token en las cookies");
     }
 
-    // 2. Instanciar el Proceso (Asumiendo que buscaremos el proceso por nombre
-    // primero)
-    // Obtener el ID del proceso OLVA ClasificacionCarga
     String searchProcessUrl = BONITA_URL + "/API/bpm/process?f=name=OLVA_Clasificacion_Carga&p=0&c=10";
     HttpHeaders apiHeaders = new HttpHeaders();
     apiHeaders.put(HttpHeaders.COOKIE, cookies);
@@ -86,19 +78,21 @@ public class AlmacenRabbitConsumer {
     apiHeaders.setContentType(MediaType.APPLICATION_JSON);
 
     HttpEntity<Void> searchRequest = new HttpEntity<>(null, apiHeaders);
-    ResponseEntity<List> searchResponse = restTemplate.exchange(searchProcessUrl, HttpMethod.GET, searchRequest,
-        List.class);
+    ResponseEntity<List<Map<String, Object>>> searchResponse = restTemplate.exchange(
+        searchProcessUrl,
+        HttpMethod.GET,
+        searchRequest,
+        new ParameterizedTypeReference<List<Map<String, Object>>>() {
+        });
 
     List<Map<String, Object>> procesos = searchResponse.getBody();
     if (procesos == null || procesos.isEmpty()) {
       throw new RuntimeException("No se encontró el proceso ClasificacionCarga desplegado en Bonita.");
     }
 
-    // Tomar el primer proceso encontrado
     String processId = String.valueOf(procesos.get(0).get("id"));
     System.out.println("✅ ID de Proceso encontrado: " + processId);
 
-    // 3. Hacer POST para instanciar
     String instanciateUrl = BONITA_URL + "/API/bpm/process/" + processId + "/instantiation";
     Map<String, String> contract = new HashMap<>();
     contract.put("trackingInput", tracking);

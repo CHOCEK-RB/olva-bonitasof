@@ -7,19 +7,19 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration
+@RequiredArgsConstructor
 public class RabbitMQConfig {
 
   public static final String EXCHANGE_NAME = "olva.logistica.exchange";
   public static final String QUEUE_NAME = "almacen_queue";
   public static final String ROUTING_KEY = "envio.despachado";
 
-  @Autowired
-  private ConnectionFactory connectionFactory;
+  private final ConnectionFactory connectionFactory;
 
   @PostConstruct
   public void forzarInfraestructuraRabbit() {
@@ -48,7 +48,8 @@ public class RabbitMQConfig {
 
   @Bean
   public org.springframework.amqp.rabbit.core.RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-    org.springframework.amqp.rabbit.core.RabbitTemplate template = new org.springframework.amqp.rabbit.core.RabbitTemplate(connectionFactory);
+    org.springframework.amqp.rabbit.core.RabbitTemplate template = new org.springframework.amqp.rabbit.core.RabbitTemplate(
+        connectionFactory);
     template.setMessageConverter(jsonMessageConverter());
     return template;
   }

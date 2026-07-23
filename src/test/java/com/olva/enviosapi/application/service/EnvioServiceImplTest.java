@@ -14,7 +14,6 @@ import com.olva.enviosapi.application.dto.EnvioResponseDTO;
 import com.olva.enviosapi.application.dto.EnvioTrackingResponse;
 import com.olva.enviosapi.application.excepcion.EnvioNoEncontradoException;
 import com.olva.enviosapi.domain.model.*;
-import com.olva.enviosapi.domain.repository.IEnvioRepository;
 import com.olva.enviosapi.domain.repository.IRegistroEnvioRepository;
 
 import java.time.LocalDateTime;
@@ -32,9 +31,6 @@ class EnvioServiceImplTest {
 
   @Mock
   private IRegistroEnvioRepository repository;
-
-  @Mock
-  private IEnvioRepository envioRepository;
 
   @Mock
   private org.springframework.amqp.rabbit.core.RabbitTemplate rabbitTemplate;
@@ -56,7 +52,7 @@ class EnvioServiceImplTest {
 
     RegistroEnvio mockEnvio = RegistroEnvio.builder()
         .id("12345")
-        .estadoEnvio("Recibido")
+        .estado(EstadoEnvio.PENDIENTE)
         .montoTotal(13.5)
         .build();
 
@@ -66,7 +62,7 @@ class EnvioServiceImplTest {
 
     assertNotNull(response);
     assertEquals(13.5, response.getMontoTotal());
-    assertEquals("Recibido", response.getEstadoEnvio());
+    assertEquals("PENDIENTE", response.getEstadoEnvio());
   }
 
   @Test
@@ -75,7 +71,7 @@ class EnvioServiceImplTest {
     RegistroEnvio mockEnvio = RegistroEnvio.builder()
         .id(envioId)
         .pagoConfirmado(false)
-        .estadoEnvio("Recibido")
+        .estado(EstadoEnvio.PENDIENTE)
         .build();
 
     when(repository.findById(envioId)).thenReturn(Optional.of(mockEnvio));
@@ -105,16 +101,18 @@ class EnvioServiceImplTest {
 
     // ---------- GIVEN (Precondiciones / Valores de prueba) ----------
     String numeroTracking = "TRK-2026-00123";
-    Envio envioExistente = new Envio(
-        numeroTracking,
-        EstadoEnvio.EN_TRANSITO,
-        "Arequipa",
-        "Lima",
-        "Centro de distribución - Ica",
-        LocalDateTime.of(2026, 7, 20, 9, 0),
-        LocalDateTime.of(2026, 7, 24, 18, 0));
+    RegistroEnvio envioExistente = new RegistroEnvio();
+    envioExistente.setId("UUID-1234");
+    envioExistente.setNumeroTracking(numeroTracking);
+    envioExistente.setEstado(EstadoEnvio.EN_TRANSITO);
+    Paquete paquete = new Paquete();
+    paquete.setDireccionOrigen("Arequipa");
+    paquete.setDireccionDestino("Lima");
+    envioExistente.setDatosPaquete(paquete);
+    envioExistente.setUbicacionActual("Centro de distribución - Ica");
+    envioExistente.setFechaEntregaEstimada(LocalDateTime.of(2026, 7, 24, 18, 0));
 
-    when(envioRepository.buscarPorNumeroTracking(numeroTracking))
+    when(repository.findByNumeroTracking(numeroTracking))
         .thenReturn(Optional.of(envioExistente));
 
     // ---------- WHEN (Acción / caso de uso ejecutado) ----------
@@ -129,15 +127,14 @@ class EnvioServiceImplTest {
     assertEquals("Centro de distribución - Ica", resultado.getUbicacionActual());
     assertEquals(LocalDateTime.of(2026, 7, 24, 18, 0), resultado.getFechaEntregaEstimada());
 
-    verify(envioRepository, times(1)).buscarPorNumeroTracking(numeroTracking);
-    verifyNoMoreInteractions(envioRepository);
+    verify(repository, times(1)).findByNumeroTracking(numeroTracking);
   }
 
   @Test
   @DisplayName("consultarEstado_CuandoNoExiste_DeberiaLanzarExcepcion")
   void consultarEstado_CuandoNoExiste_DeberiaLanzarExcepcion() {
     String trackingInexistente = "TRK-NO-EXISTE";
-    when(envioRepository.buscarPorNumeroTracking(trackingInexistente))
+    when(repository.findByNumeroTracking(trackingInexistente))
         .thenReturn(Optional.empty());
 
     assertThrows(

@@ -4,10 +4,10 @@ import com.olva.enviosapi.application.dto.EnvioRequestDTO;
 import com.olva.enviosapi.application.dto.EnvioResponseDTO;
 import com.olva.enviosapi.application.dto.EnvioTrackingResponse;
 import com.olva.enviosapi.application.excepcion.EnvioNoEncontradoException;
-import com.olva.enviosapi.domain.model.Envio;
+import com.olva.enviosapi.domain.model.EstadoEnvio;
 import com.olva.enviosapi.domain.model.RegistroEnvio;
-import com.olva.enviosapi.domain.repository.IEnvioRepository;
 import com.olva.enviosapi.domain.repository.IRegistroEnvioRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,19 +17,11 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class EnvioServiceImpl implements IEnvioService {
 
   private final IRegistroEnvioRepository repository;
-  private final IEnvioRepository envioRepository;
   private final org.springframework.amqp.rabbit.core.RabbitTemplate rabbitTemplate;
-
-  public EnvioServiceImpl(IRegistroEnvioRepository repository,
-      IEnvioRepository envioRepository,
-      org.springframework.amqp.rabbit.core.RabbitTemplate rabbitTemplate) {
-    this.repository = repository;
-    this.envioRepository = envioRepository;
-    this.rabbitTemplate = rabbitTemplate;
-  }
 
   @Override
   public List<EnvioResponseDTO> listarEnvios() {
@@ -50,7 +42,7 @@ public class EnvioServiceImpl implements IEnvioService {
             request.getTipoPago() != null && !request.getTipoPago().isBlank() ? request.getTipoPago() : "Pendiente")
         .montoTotal(monto)
         .pagoConfirmado(false)
-        .estadoEnvio("Recibido")
+        .estado(EstadoEnvio.PENDIENTE)
         .remitente(request.getRemitente())
         .datosPaquete(request.getDatosPaquete())
         .build();
@@ -72,7 +64,7 @@ public class EnvioServiceImpl implements IEnvioService {
       Random random = new Random();
       envio.setNumeroTracking("OLVA-" + (10000 + random.nextInt(90000)));
       envio.setComprobantePago("BOLETA-B" + (10000 + random.nextInt(90000)));
-      envio.setEstadoEnvio("En red");
+      envio.setEstado(EstadoEnvio.EN_TRANSITO);
       repository.save(envio);
     }
 
@@ -125,10 +117,9 @@ public class EnvioServiceImpl implements IEnvioService {
     mensajeAmqp.put("mensaje", "Paquete despachado y listo para clasificación");
 
     rabbitTemplate.convertAndSend(
-        com.olva.enviosapi.application.config.RabbitMQConfig.EXCHANGE_NAME, 
-        com.olva.enviosapi.application.config.RabbitMQConfig.ROUTING_KEY, 
-        mensajeAmqp
-    );
+        com.olva.enviosapi.application.config.RabbitMQConfig.EXCHANGE_NAME,
+        com.olva.enviosapi.application.config.RabbitMQConfig.ROUTING_KEY,
+        mensajeAmqp);
 
     return mapToDTO(envio, "Paquete despachado. Notificación enviada a RabbitMQ.");
   }
@@ -139,30 +130,28 @@ public class EnvioServiceImpl implements IEnvioService {
         .orElseThrow(() -> new EnvioNoEncontradoException(numeroTracking));
 
     return new EnvioTrackingResponse(
-        0L,
+        envio.getId(),
         envio.getNumeroTracking(),
-        null,
-        envio.getDatosPaquete() != null ? envio.getDatosPaquete().getDireccionOrigen() : "",
-        envio.getDatosPaquete() != null ? envio.getDatosPaquete().getDireccionDestino() : "",
-        "Almacén",
-        null);
+        envio.getEstado(),
+        envio.getOrigen(),
+        envio.getDestino(),
+        envio.getUbicacionActual(),
+        envio.getFechaEntregaEstimada());
   }
 
   @Override
   public void actualizarDestino(String numeroTracking, String nuevoDestino) {
     RegistroEnvio envio = repository.findByNumeroTracking(numeroTracking)
         .orElseThrow(() -> new EnvioNoEncontradoException(numeroTracking));
-    if (envio.getDatosPaquete() != null) {
-        envio.getDatosPaquete().setDireccionDestino(nuevoDestino);
-        repository.save(envio);
-    }
+    envio.getDatosPaquete().setDireccionDestino(nuevoDestino);
+    repository.save(envio);
   }
 
   private EnvioResponseDTO mapToDTO(RegistroEnvio envio, String mensaje) {
     return EnvioResponseDTO.builder()
         .id(envio.getId())
         .fechaRegistro(envio.getFechaRegistro())
-        .estadoEnvio(envio.getEstadoEnvio())
+        .estadoEnvio(envio.getEstado() != null ? envio.getEstado().name() : null)
         .montoTotal(envio.getMontoTotal())
         .pagoConfirmado(envio.getPagoConfirmado())
         .numeroTracking(envio.getNumeroTracking())

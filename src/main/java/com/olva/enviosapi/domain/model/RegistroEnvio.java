@@ -23,9 +23,18 @@ public class RegistroEnvio {
   private Double montoTotal;
   private Boolean pagoConfirmado;
   private String numeroTracking;
-  private String estadoEnvio;
+
+  @Enumerated(EnumType.STRING)
+  private EstadoEnvio estado;
+
   private String comprobantePago;
   private String observacionesPaquete;
+
+  private String loteId;
+  private String ubicacionActual;
+  private java.time.LocalDateTime fechaEnvio;
+  private java.time.LocalDateTime fechaEntregaEstimada;
+
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "cliente_id")
   private Cliente remitente;
@@ -34,5 +43,11 @@ public class RegistroEnvio {
   @JoinColumn(name = "paquete_id")
   private Paquete datosPaquete;
 
-  private String loteId;
+  public String getDestino() {
+    return this.datosPaquete != null ? this.datosPaquete.getDireccionDestino() : null;
+  }
+
+  public String getOrigen() {
+    return this.datosPaquete != null ? this.datosPaquete.getDireccionOrigen() : null;
+  }
 }

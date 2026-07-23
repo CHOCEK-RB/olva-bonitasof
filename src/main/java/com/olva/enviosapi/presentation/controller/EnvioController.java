@@ -7,6 +7,7 @@ import com.olva.enviosapi.application.service.IEnvioService;
 import com.olva.enviosapi.application.dto.EnvioRequestDTO;
 import jakarta.validation.Valid;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/envios")
+@RequiredArgsConstructor
 public class EnvioController {
 
   private final IEnvioService envioService;
-
-  public EnvioController(IEnvioService envioService) {
-    this.envioService = envioService;
-  }
 
   // GIVEN una solicitud WHEN llamo a GET /api/envios THEN devuelve todos los
   // envios
@@ -55,7 +53,8 @@ public class EnvioController {
     return ResponseEntity.ok(response);
   }
 
-  // GIVEN un envio id WHEN llamo a POST /api/envios/{id}/despachar THEN publica evento en RabbitMQ
+  // GIVEN un envio id WHEN llamo a POST /api/envios/{id}/despachar THEN publica
+  // evento en RabbitMQ
   @PostMapping("/{id}/despachar")
   public ResponseEntity<EnvioResponseDTO> despacharEnvio(@PathVariable String id) {
     EnvioResponseDTO response = envioService.despacharEnvio(id);

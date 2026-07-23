@@ -11,51 +11,52 @@ import java.time.LocalDateTime;
 @Table(name = "lotes_despacho")
 public class LoteDespacho {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    private String rutaDestino;
-    private String estado;
-    private LocalDateTime fechaCreacion;
+  private String rutaDestino;
+  private String estado;
+  private LocalDateTime fechaCreacion;
 
-    protected LoteDespacho() {}
+  protected LoteDespacho() {
+  }
 
-    public LoteDespacho(String rutaDestino, String estado, LocalDateTime fechaCreacion) {
-        this.rutaDestino = rutaDestino;
-        this.estado = estado;
-        this.fechaCreacion = fechaCreacion;
-    }
+  public LoteDespacho(String rutaDestino, String estado, LocalDateTime fechaCreacion) {
+    this.rutaDestino = rutaDestino;
+    this.estado = estado;
+    this.fechaCreacion = fechaCreacion;
+  }
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public String getRutaDestino() {
-        return rutaDestino;
-    }
+  public String getRutaDestino() {
+    return rutaDestino;
+  }
 
-    public void setRutaDestino(String rutaDestino) {
-        this.rutaDestino = rutaDestino;
-    }
+  public void setRutaDestino(String rutaDestino) {
+    this.rutaDestino = rutaDestino;
+  }
 
-    public String getEstado() {
-        return estado;
-    }
+  public String getEstado() {
+    return estado;
+  }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
+  public void setEstado(String estado) {
+    this.estado = estado;
+  }
 
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
+  public LocalDateTime getFechaCreacion() {
+    return fechaCreacion;
+  }
 
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
+  public void setFechaCreacion(LocalDateTime fechaCreacion) {
+    this.fechaCreacion = fechaCreacion;
+  }
 }
