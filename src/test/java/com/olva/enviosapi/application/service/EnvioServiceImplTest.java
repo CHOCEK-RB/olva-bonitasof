@@ -85,14 +85,13 @@ class EnvioServiceImplTest {
   }
 
   @Test
-  void confirmarPago_CuandoIdNoExiste_DeberiaRetornarMensajeDeError() {
+  void confirmarPago_CuandoIdNoExiste_DeberiaLanzarExcepcion() {
     String idFalso = "99999";
     when(repository.findById(idFalso)).thenReturn(Optional.empty());
 
-    EnvioResponseDTO response = envioService.confirmarPago(idFalso);
-
-    assertNotNull(response);
-    assertEquals("ID de envio no encontrado", response.getMensaje());
+    assertThrows(com.olva.enviosapi.application.excepcion.EnvioNoEncontradoException.class, () -> {
+        envioService.confirmarPago(idFalso);
+    });
   }
 
   @Test

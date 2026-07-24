@@ -1,4 +1,4 @@
-package com.olva.enviosapi.application.almacen.dto;
+package com.olva.enviosapi.application.dto;
 
 public class ClasificarRequest {
   private String numeroTracking;

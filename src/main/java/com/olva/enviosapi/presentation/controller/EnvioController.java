@@ -2,13 +2,11 @@ package com.olva.enviosapi.presentation.controller;
 
 import com.olva.enviosapi.application.dto.EnvioResponseDTO;
 import com.olva.enviosapi.application.dto.EnvioTrackingResponse;
-import com.olva.enviosapi.application.excepcion.EnvioNoEncontradoException;
 import com.olva.enviosapi.application.service.IEnvioService;
 import com.olva.enviosapi.application.dto.EnvioRequestDTO;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -82,8 +80,4 @@ public class EnvioController {
     return ResponseEntity.ok().build();
   }
 
-  @ExceptionHandler(EnvioNoEncontradoException.class)
-  public ResponseEntity<String> manejarEnvioNoEncontrado(EnvioNoEncontradoException ex) {
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-  }
 }

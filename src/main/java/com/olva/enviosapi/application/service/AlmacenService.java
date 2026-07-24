@@ -1,5 +1,6 @@
-package com.olva.enviosapi.application.almacen.service;
+package com.olva.enviosapi.application.service;
 
+import com.olva.enviosapi.application.excepcion.EnvioNoEncontradoException;
 import com.olva.enviosapi.domain.model.LoteDespacho;
 import com.olva.enviosapi.domain.model.RegistroEnvio;
 import com.olva.enviosapi.domain.repository.ILoteDespachoRepository;
@@ -19,7 +20,7 @@ public class AlmacenService {
 
   public String clasificarEnvio(String numeroTracking) {
     RegistroEnvio envio = envioRepository.findByNumeroTracking(numeroTracking)
-        .orElseThrow(() -> new RuntimeException("Envio no encontrado con Tracking: " + numeroTracking));
+        .orElseThrow(() -> new EnvioNoEncontradoException(numeroTracking));
 
     String destino = envio.getDestino();
     if (destino == null || destino.trim().isEmpty()) {

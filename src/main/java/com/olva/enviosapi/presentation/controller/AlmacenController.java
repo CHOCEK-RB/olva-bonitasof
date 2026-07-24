@@ -1,7 +1,7 @@
-package com.olva.enviosapi.application.almacen.controller;
+package com.olva.enviosapi.presentation.controller;
 
-import com.olva.enviosapi.application.almacen.dto.ClasificarRequest;
-import com.olva.enviosapi.application.almacen.service.AlmacenService;
+import com.olva.enviosapi.application.dto.ClasificarRequest;
+import com.olva.enviosapi.application.service.AlmacenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

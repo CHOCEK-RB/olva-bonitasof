@@ -1,9 +1,10 @@
-package com.olva.enviosapi.application.almacen.messaging;
+package com.olva.enviosapi.application.service;
 
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -14,39 +15,36 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component
-public class AlmacenRabbitConsumer {
+@Service
+public class BonitaService {
 
-  private final RestTemplate restTemplate = new RestTemplate();
-  private final String BONITA_URL = "http://localhost:8080/bonita";
+  private final RestTemplate restTemplate;
 
-  @RabbitListener(queues = "almacen_queue")
-  public void procesarMensajeAlmacen(Map<String, Object> mensaje) {
-    System.out.println("🐇 [ALMACEN] Mensaje recibido de RabbitMQ: " + mensaje);
+  @Value("${bonita.api.url}")
+  private String bonitaUrl;
 
-    String numeroTracking = (String) mensaje.get("numeroTracking");
-    if (numeroTracking == null) {
-      System.err.println("❌ No se encontró numeroTracking en el mensaje.");
-      return;
-    }
+  @Value("${bonita.api.username}")
+  private String username;
 
-    try {
-      instanciarProcesoBonita(numeroTracking);
-    } catch (Exception e) {
-      System.err.println("❌ Error al instanciar proceso en Bonita: " + e.getMessage());
-      e.printStackTrace();
-    }
+  @Value("${bonita.api.password}")
+  private String password;
+
+  @Value("${bonita.api.process.name}")
+  private String processName;
+
+  public BonitaService() {
+    this.restTemplate = new RestTemplate();
   }
 
-  private void instanciarProcesoBonita(String tracking) {
-    String loginUrl = BONITA_URL + "/loginservice";
+  public void instanciarProceso(String tracking) {
+    String loginUrl = bonitaUrl + "/loginservice";
 
     HttpHeaders loginHeaders = new HttpHeaders();
     loginHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
     MultiValueMap<String, String> loginBody = new LinkedMultiValueMap<>();
-    loginBody.add("username", "william.jobs");
-    loginBody.add("password", "bpm");
+    loginBody.add("username", username);
+    loginBody.add("password", password);
     loginBody.add("redirect", "false");
 
     HttpEntity<MultiValueMap<String, String>> loginRequest = new HttpEntity<>(loginBody, loginHeaders);
@@ -71,7 +69,7 @@ public class AlmacenRabbitConsumer {
       throw new RuntimeException("No se encontró X-Bonita-API-Token en las cookies");
     }
 
-    String searchProcessUrl = BONITA_URL + "/API/bpm/process?f=name=OLVA_Clasificacion_Carga&p=0&c=10";
+    String searchProcessUrl = bonitaUrl + "/API/bpm/process?f=name=" + processName + "&p=0&c=10";
     HttpHeaders apiHeaders = new HttpHeaders();
     apiHeaders.put(HttpHeaders.COOKIE, cookies);
     apiHeaders.set("X-Bonita-API-Token", apiToken);
@@ -87,19 +85,18 @@ public class AlmacenRabbitConsumer {
 
     List<Map<String, Object>> procesos = searchResponse.getBody();
     if (procesos == null || procesos.isEmpty()) {
-      throw new RuntimeException("No se encontró el proceso ClasificacionCarga desplegado en Bonita.");
+      throw new RuntimeException("No se encontró el proceso " + processName + " desplegado en Bonita.");
     }
 
     String processId = String.valueOf(procesos.get(0).get("id"));
     System.out.println("✅ ID de Proceso encontrado: " + processId);
 
-    String instanciateUrl = BONITA_URL + "/API/bpm/process/" + processId + "/instantiation";
+    String instanciateUrl = bonitaUrl + "/API/bpm/process/" + processId + "/instantiation";
     Map<String, String> contract = new HashMap<>();
     contract.put("trackingInput", tracking);
 
     HttpEntity<Map<String, String>> instanciateRequest = new HttpEntity<>(contract, apiHeaders);
-    ResponseEntity<String> instanciateResponse = restTemplate.postForEntity(instanciateUrl, instanciateRequest,
-        String.class);
+    restTemplate.postForEntity(instanciateUrl, instanciateRequest, String.class);
 
     System.out.println("✅ Proceso de Almacen instanciado correctamente en Bonita para el tracking: " + tracking);
   }

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -54,12 +53,8 @@ public class EnvioServiceImpl implements IEnvioService {
 
   @Override
   public EnvioResponseDTO generarRotuloTracking(String id) {
-    Optional<RegistroEnvio> envioOpt = repository.findById(id);
-    if (envioOpt.isEmpty()) {
-      return EnvioResponseDTO.builder().mensaje("ID de envio no encontrado").build();
-    }
-
-    RegistroEnvio envio = envioOpt.get();
+    RegistroEnvio envio = repository.findById(id)
+        .orElseThrow(() -> new EnvioNoEncontradoException(id));
     if (envio.getNumeroTracking() == null) {
       Random random = new Random();
       envio.setNumeroTracking("OLVA-" + (10000 + random.nextInt(90000)));
@@ -73,12 +68,8 @@ public class EnvioServiceImpl implements IEnvioService {
 
   @Override
   public EnvioResponseDTO confirmarPago(String id) {
-    Optional<RegistroEnvio> envioOpt = repository.findById(id);
-    if (envioOpt.isEmpty()) {
-      return EnvioResponseDTO.builder().mensaje("ID de envio no encontrado").build();
-    }
-
-    RegistroEnvio envio = envioOpt.get();
+    RegistroEnvio envio = repository.findById(id)
+        .orElseThrow(() -> new EnvioNoEncontradoException(id));
     envio.setPagoConfirmado(true);
     repository.save(envio);
 
@@ -87,12 +78,8 @@ public class EnvioServiceImpl implements IEnvioService {
 
   @Override
   public EnvioResponseDTO recepcionEnvio(String id, com.olva.enviosapi.application.dto.RecepcionRequestDTO request) {
-    Optional<RegistroEnvio> envioOpt = repository.findById(id);
-    if (envioOpt.isEmpty()) {
-      return EnvioResponseDTO.builder().mensaje("ID de envio no encontrado").build();
-    }
-
-    RegistroEnvio envio = envioOpt.get();
+    RegistroEnvio envio = repository.findById(id)
+        .orElseThrow(() -> new EnvioNoEncontradoException(id));
     envio.setTipoPago(request.getTipoPago());
     envio.setObservacionesPaquete(request.getObservacionesPaquete());
 
@@ -103,12 +90,8 @@ public class EnvioServiceImpl implements IEnvioService {
 
   @Override
   public EnvioResponseDTO despacharEnvio(String id) {
-    Optional<RegistroEnvio> envioOpt = repository.findById(id);
-    if (envioOpt.isEmpty()) {
-      throw new RuntimeException("ID de envio no encontrado: " + id);
-    }
-
-    RegistroEnvio envio = envioOpt.get();
+    RegistroEnvio envio = repository.findById(id)
+        .orElseThrow(() -> new EnvioNoEncontradoException(id));
 
     // Crear un Map para enviar como JSON
     java.util.Map<String, Object> mensajeAmqp = new java.util.HashMap<>();
