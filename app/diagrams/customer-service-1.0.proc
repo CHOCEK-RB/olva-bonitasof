@@ -712,13 +712,13 @@
             </children>
             <children xmi:type="notation:Shape" xmi:id="_Vp8WOW1KEfGFvIBFhOqB5w" type="3027" element="_Vp8WMG1KEfGFvIBFhOqB5w" fontName="Segoe UI" fillColor="14334392" lineColor="10710316">
               <children xmi:type="notation:DecorationNode" xmi:id="_Vp8WO21KEfGFvIBFhOqB5w" type="5017"/>
-              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Vp8WOm1KEfGFvIBFhOqB5w" x="1733" y="56" width="120" height="60"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Vp8WOm1KEfGFvIBFhOqB5w" x="1695" y="57" width="120" height="60"/>
             </children>
             <children xmi:type="notation:Shape" xmi:id="_YCtkY21KEfGFvIBFhOqB5w" type="3003" element="_YCs9UG1KEfGFvIBFhOqB5w" fontName="Segoe UI">
               <children xmi:type="notation:DecorationNode" xmi:id="_YCtkZW1KEfGFvIBFhOqB5w" type="5025">
                 <layoutConstraint xmi:type="notation:Location" xmi:id="_YCtkZm1KEfGFvIBFhOqB5w" y="5"/>
               </children>
-              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_YCtkZG1KEfGFvIBFhOqB5w" x="1980" y="72"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_YCtkZG1KEfGFvIBFhOqB5w" x="1866" y="71"/>
             </children>
           </children>
           <styles xmi:type="notation:DescriptionStyle" xmi:id="_14IcUW1HEfGFvIBFhOqB5w"/>
