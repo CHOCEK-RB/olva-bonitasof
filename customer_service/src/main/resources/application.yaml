@@ -1,0 +1,68 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: customer-service
+
+  # ── MariaDB ───────────────────────────────────────────────────────────────
+  datasource:
+    # ⚠️  Sin especificar la BD en el URL: el driver conecta al servidor raíz
+    #     para que schema.sql pueda ejecutar CREATE DATABASE IF NOT EXISTS.
+    #     Si se incluye 'reclamos_db' aquí y la BD no existe, el arranque falla.
+    url: jdbc:mariadb://localhost:3306/?allowMultiQueries=true
+    username: root
+    password: root
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      # 'none' porque el esquema lo gestiona schema.sql (fuente de verdad DDL)
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MariaDBDialect
+        # Le indica a Hibernate qué esquema usar para las entidades
+        # (reemplaza la BD que ya no va en el JDBC URL)
+        default_catalog: reclamos_db
+
+  # ── Scripts SQL de inicialización ─────────────────────────────────────────
+  sql:
+    init:
+      # always = ejecuta schema.sql + data.sql en CADA arranque de la app
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      # El encoding de los archivos SQL
+      encoding: UTF-8
+
+  # ── RabbitMQ ──────────────────────────────────────────────────────────────
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+
+# ── Springdoc / Swagger UI ────────────────────────────────────────────────
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+# ── RabbitMQ Custom Queues & Exchanges ────────────────────────────────────
+reclamos:
+  rabbitmq:
+    exchange: reclamos.exchange
+    # Cola de entrada: el BPM publica aquí para disparar "Liquidar Compensación"
+    queue:
+      compensacion: reclamos.compensacion.queue
+    # Cola de salida: el microservicio publica aquí para notificar al BPM
+    queue-respuesta:
+      compensacion: reclamos.compensacion.respuesta.queue
+    routing-key:
+      compensacion: reclamos.compensacion
+      compensacion-respuesta: reclamos.compensacion.respuesta

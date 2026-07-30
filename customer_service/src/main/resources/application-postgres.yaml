@@ -1,0 +1,32 @@
+  # ============================================================
+  #  PERFIL: postgres
+  #  Actívalo con: -Dspring.profiles.active=postgres
+  #  o en IntelliJ: Run Config → Active profiles: postgres
+  # ============================================================
+
+  datasource:
+    # ⚠️  PostgreSQL NO soporta CREATE DATABASE dentro de un script
+    #     conectado a otra BD. La BD 'reclamos_db' debe existir primero.
+    #     Créala una vez: CREATE DATABASE reclamos_db;
+    url: jdbc:postgresql://localhost:5432/reclamos_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        # En PostgreSQL el "schema" equivale al search_path; 'public' es el default
+        default_schema: public
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema-postgres.sql
+      data-locations: classpath:data-postgres.sql
+      encoding: UTF-8
