@@ -1,0 +1,54 @@
+@startuml OlvaCourier_Modulo_Almacen_Bonita
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+package "Presentacion" #FFD9D9 {
+  class "AlmacenController" as AC {
+    +clasificar(request) : Map<String, String>
+  }
+}
+
+package "Aplicacion / Eventos" #C9F7F7 {
+  class "AlmacenService" as AS {
+    +clasificarEnvio(tracking) : String
+  }
+
+  class "AlmacenRabbitConsumer" as ARC {
+    +procesarMensajeAlmacen(mensaje) : void
+  }
+
+  class "BonitaService" as BS {
+    +instanciarProceso(tracking) : void
+  }
+
+  class "RabbitMQConfig" as RMQC {
+    +EXCHANGE_NAME: String
+    +QUEUE_NAME: String
+    +ROUTING_KEY: String
+  }
+}
+
+package "Dominio" #FFF6C9 {
+  class "LoteDespacho" as LD {
+    -id: String
+    -rutaDestino: String
+    -estado: String
+    -fechaCreacion: LocalDateTime
+  }
+
+  interface "ILoteDespachoRepository" as ILDR
+}
+
+package "Infraestructura Externa" #D9F7D9 {
+  class "RabbitMQ Broker (almacen_queue)" as RMQ << Queue >>
+  class "BonitaSoft BPM Engine" as BONITA << Component >>
+}
+
+AC --> AS
+AS --> ILDR
+RMQC ..> RMQ : configura
+RMQ --> ARC : notifica evento
+ARC --> BS : invoca
+BS --> BONITA : API REST (Login/Instantiate)
+@enduml

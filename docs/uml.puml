@@ -1,0 +1,78 @@
+@startuml OlvaCourier_Arquitectura_General
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+skinparam classFontSize 10
+skinparam packageFontSize 12
+
+package "CAPA DE PRESENTACION" #FFD9D9 {
+  class "EnvioController" as EC
+  class "AlmacenController" as AC
+  class "DevolucionController" as DC
+  class "GlobalExceptionHandler" as GEH
+}
+
+package "CAPA DE APLICACION" #C9F7F7 {
+  interface "IEnvioService" as IES
+  class "EnvioServiceImpl" as ESI
+  class "AlmacenService" as AS
+  interface "IDevolucionService" as IDS
+  class "DevolucionServiceImpl" as DSI
+  class "BonitaService" as BS
+  class "AlmacenRabbitConsumer" as ARC
+
+  ESI .up.|> IES
+  DSI .up.|> IDS
+}
+
+package "CAPA DE DOMINIO (DDD)" #FFF6C9 {
+  package "Agregado Envio" #E8F5E9 {
+    class "RegistroEnvio" as RE
+    class "Paquete" as PQ
+    class "Cliente" as CL
+    enum "EstadoEnvio" as EE
+    interface "IRegistroEnvioRepository" as IRER
+    RE "1" *-- "1" PQ
+    RE "1" *-- "1" CL
+    RE --> EE
+  }
+
+  package "Agregado Almacen" #E8F5E9 {
+    class "LoteDespacho" as LD
+    interface "ILoteDespachoRepository" as ILDR
+  }
+
+  package "Agregado Devolucion" #E8F5E9 {
+    class "DevolucionEnvio" as DE
+    interface "IDevolucionRepository" as IDR
+  }
+
+  RE "1" -- "0..1" LD : asignado a
+  DE "1" -- "1" RE : corresponde a
+}
+
+package "CAPA DE INFRAESTRUCTURA" #D9F7D9 {
+  class "MariaDB (olva_db)" as DB << Database >>
+  class "RabbitMQ (almacen_queue)" as RMQ << Queue >>
+  class "BonitaSoft BPM REST API" as BONITA << Component >>
+}
+
+' Dependencias entre capas
+EC --> IES
+AC --> AS
+DC --> IDS
+
+ESI --> IRER
+ESI --> RMQ
+AS --> IRER
+AS --> ILDR
+DSI --> IDR
+DSI --> IRER
+ARC --> BS
+BS --> BONITA
+
+IRER ..> DB
+ILDR ..> DB
+IDR ..> DB
+
+@enduml

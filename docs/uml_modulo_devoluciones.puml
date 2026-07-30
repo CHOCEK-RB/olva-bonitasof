@@ -1,0 +1,42 @@
+@startuml OlvaCourier_Modulo_Devoluciones
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+package "Presentacion" #FFD9D9 {
+  class "DevolucionController" as DC {
+    +listarDevoluciones() : List<DevolucionResponseDTO>
+    +registrarIntentoFallido(request) : DevolucionResponseDTO
+    +recepsionarEnAlmacen(request) : DevolucionResponseDTO
+    +consultarPorTracking(tracking) : DevolucionResponseDTO
+    +registrarResolucion(request) : DevolucionResponseDTO
+  }
+}
+
+package "Aplicacion" #C9F7F7 {
+  interface "IDevolucionService" as IDS
+  class "DevolucionServiceImpl" as DSI
+  DSI .up.|> IDS
+}
+
+package "Dominio" #FFF6C9 {
+  class "DevolucionEnvio" as DE {
+    -id: String
+    -numeroTracking: String
+    -motivo: String
+    -observaciones: String
+    -estado: String
+    -zonaAlmacen: String
+    -decisionRemitente: String
+    -fechaIntentoFallido: LocalDateTime
+    -fechaRecepcionAlmacen: LocalDateTime
+    -fechaResolucion: LocalDateTime
+  }
+
+  interface "IDevolucionRepository" as IDR
+}
+
+DC --> IDS
+DSI --> IDR
+DSI --> DE
+@enduml

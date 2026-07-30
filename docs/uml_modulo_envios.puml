@@ -1,0 +1,73 @@
+@startuml OlvaCourier_Modulo_Envios
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype ortho
+
+package "Presentacion" #FFD9D9 {
+  class "EnvioController" as EC {
+    +listarEnvios() : List<EnvioResponseDTO>
+    +registrarEnvio(request) : EnvioResponseDTO
+    +generarRotulo(id) : EnvioResponseDTO
+    +recepcionEnvio(id, request) : EnvioResponseDTO
+    +despacharEnvio(id) : EnvioResponseDTO
+    +confirmarPago(id) : EnvioResponseDTO
+    +consultarEstado(tracking) : EnvioTrackingResponse
+    +actualizarDestino(tracking, request) : Void
+  }
+}
+
+package "Aplicacion" #C9F7F7 {
+  interface "IEnvioService" as IES
+  class "EnvioServiceImpl" as ESI
+  ESI .up.|> IES
+}
+
+package "Dominio" #FFF6C9 {
+  class "RegistroEnvio" as RE {
+    -id: String
+    -fechaRegistro: LocalDate
+    -tipoPago: String
+    -montoTotal: Double
+    -pagoConfirmado: Boolean
+    -numeroTracking: String
+    -comprobantePago: String
+    -observacionesPaquete: String
+    -loteId: String
+  }
+
+  class "Cliente" as CL {
+    -id: String
+    -tipoDocumento: String
+    -numeroDocumento: String
+    -nombres: String
+    -apellidos: String
+    -telefono: String
+    -email: String
+  }
+
+  class "Paquete" as PQ {
+    -id: String
+    -peso: Double
+    -valorDeclarado: Double
+    -contenido: String
+    -direccionOrigen: String
+    -direccionDestino: String
+  }
+
+  enum "EstadoEnvio" as EE {
+    PENDIENTE
+    EN_TRANSITO
+    ENTREGADO
+    CANCELADO
+    DEVUELTO
+  }
+
+  interface "IRegistroEnvioRepository" as IRER
+}
+
+EC --> IES
+ESI --> IRER
+RE "1" *-- "1" CL
+RE "1" *-- "1" PQ
+RE --> EE
+@enduml
