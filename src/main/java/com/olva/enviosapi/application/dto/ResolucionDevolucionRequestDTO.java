@@ -6,6 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * DTO de solicitud para registrar la resolución final de devolución 
+ * (reintento, devolución o custodia).
+ */
 @Data
 @Builder
 @NoArgsConstructor

@@ -1,12 +1,14 @@
 package com.olva.enviosapi.application.dto;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
+/**
+ * DTO de respuesta estructurada para el proceso de devolución y reenvío de un paquete.
+ */
 @Data
 @Builder
 @NoArgsConstructor

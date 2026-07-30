@@ -40,4 +40,8 @@ public class Cliente {
 
   private String telefono;
   private String email;
+
+  public String getCorreo() {
+    return this.email;
+  }
 }

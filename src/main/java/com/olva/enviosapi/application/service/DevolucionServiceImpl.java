@@ -10,14 +10,16 @@ import com.olva.enviosapi.domain.model.EstadoEnvio;
 import com.olva.enviosapi.domain.model.RegistroEnvio;
 import com.olva.enviosapi.domain.repository.IDevolucionRepository;
 import com.olva.enviosapi.domain.repository.IRegistroEnvioRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+/**
+ * Implementación de la lógica de negocio para la gestión del flujo de devoluciones y reenvíos.
+ */
 @Service
 @RequiredArgsConstructor
 public class DevolucionServiceImpl implements IDevolucionService {
@@ -25,12 +27,20 @@ public class DevolucionServiceImpl implements IDevolucionService {
   private final IDevolucionRepository devolucionRepository;
   private final IRegistroEnvioRepository envioRepository;
 
+  /**
+   * Registra un intento fallido de entrega para un envío.
+   *
+   * @param request Datos del intento fallido.
+   * @return DTO de la devolución registrada.
+   */
   @Override
   public DevolucionResponseDTO registrarIntentoFallido(IntentoFallidoRequestDTO request) {
     RegistroEnvio envio = envioRepository.findByNumeroTracking(request.getNumeroTracking())
-        .orElseThrow(() -> new EnvioNoEncontradoException("No se encontró el envío con tracking: " + request.getNumeroTracking()));
+        .orElseThrow(() -> new EnvioNoEncontradoException(
+            "No se encontró el envío con tracking: " + request.getNumeroTracking()));
 
-    Optional<DevolucionEnvio> devExistente = devolucionRepository.findByNumeroTracking(request.getNumeroTracking());
+    Optional<DevolucionEnvio> devExistente = devolucionRepository.findByNumeroTracking(
+        request.getNumeroTracking());
     DevolucionEnvio devolucion;
 
     if (devExistente.isPresent()) {
@@ -53,44 +63,69 @@ public class DevolucionServiceImpl implements IDevolucionService {
     envioRepository.save(envio);
 
     devolucion = devolucionRepository.save(devolucion);
-    return mapToDTO(devolucion, envio, "Intento fallido registrado exitosamente.");
+    return mapToDto(devolucion, envio, "Intento fallido registrado exitosamente.");
   }
 
+  /**
+   * Registra el ingreso físico del paquete devuelto al almacén central.
+   *
+   * @param request Datos de la recepción en almacén.
+   * @return DTO de la devolución actualizada.
+   */
   @Override
-  public DevolucionResponseDTO recepcionarEnAlmacen(RecepcionAlmacenRequestDTO request) {
-    DevolucionEnvio devolucion = devolucionRepository.findByNumeroTracking(request.getNumeroTracking())
-        .orElseThrow(() -> new EnvioNoEncontradoException("Paquete incorrecto o no registrado para devolución: " + request.getNumeroTracking()));
-
-    RegistroEnvio envio = envioRepository.findByNumeroTracking(request.getNumeroTracking())
-        .orElseThrow(() -> new EnvioNoEncontradoException(request.getNumeroTracking()));
+  public DevolucionResponseDTO recepsionarEnAlmacen(RecepcionAlmacenRequestDTO request) {
+    DevolucionEnvio devolucion = devolucionRepository.findByNumeroTracking(
+        request.getNumeroTracking())
+        .orElseThrow(() -> new EnvioNoEncontradoException(
+            "Paquete no registrado para devolución: " + request.getNumeroTracking()));
 
     devolucion.setEstado("EN_ALMACEN");
-    devolucion.setZonaAlmacen(request.getZonaAlmacen() != null && !request.getZonaAlmacen().isBlank() 
-        ? request.getZonaAlmacen() : "ZONA-ESPERA-DEVOLUCION");
+    boolean hasZona = request.getZonaAlmacen() != null && !request.getZonaAlmacen().isBlank();
+    devolucion.setZonaAlmacen(hasZona ? request.getZonaAlmacen() : "ZONA-ESPERA-DEVOLUCION");
     if (request.getObservaciones() != null) {
       devolucion.setObservaciones(request.getObservaciones());
     }
     devolucion.setFechaRecepcionAlmacen(LocalDateTime.now());
 
     devolucion = devolucionRepository.save(devolucion);
-    return mapToDTO(devolucion, envio, "Paquete recepcionado y verificado en almacén local.");
+
+    RegistroEnvio envio = envioRepository.findByNumeroTracking(request.getNumeroTracking())
+        .orElseThrow(() -> new EnvioNoEncontradoException(request.getNumeroTracking()));
+
+    return mapToDto(devolucion, envio, "Paquete recepcionado y verificado en almacén local.");
   }
 
+  /**
+   * Consulta el registro de devolución por su número de tracking.
+   *
+   * @param numeroTracking Número de seguimiento.
+   * @return DTO con el detalle de la devolución.
+   */
   @Override
   public DevolucionResponseDTO consultarPorTracking(String numeroTracking) {
     DevolucionEnvio devolucion = devolucionRepository.findByNumeroTracking(numeroTracking)
-        .orElseThrow(() -> new EnvioNoEncontradoException("No existe registro de devolución para el tracking: " + numeroTracking));
+        .orElseThrow(() -> new EnvioNoEncontradoException(
+            "No existe registro de devolución para el tracking: " + numeroTracking));
 
     RegistroEnvio envio = envioRepository.findByNumeroTracking(numeroTracking)
         .orElseThrow(() -> new EnvioNoEncontradoException(numeroTracking));
 
-    return mapToDTO(devolucion, envio, "Consulta de devolución obtenida con éxito.");
+    return mapToDto(devolucion, envio, "Consulta de devolución obtenida con éxito.");
   }
 
+  /**
+   * Registra la resolución final sobre la devolución (reintento, devolución o custodia).
+   *
+   * @param request Datos de la resolución.
+   * @return DTO actualizado.
+   */
   @Override
   public DevolucionResponseDTO registrarResolucion(ResolucionDevolucionRequestDTO request) {
-    DevolucionEnvio devolucion = devolucionRepository.findByNumeroTracking(request.getNumeroTracking())
-        .orElseThrow(() -> new EnvioNoEncontradoException("No se encontró proceso de devolución activo para tracking: " + request.getNumeroTracking()));
+    DevolucionEnvio devolucion = devolucionRepository.findByNumeroTracking(
+        request.getNumeroTracking())
+        .orElseThrow(() -> new EnvioNoEncontradoException(
+            "No se encontró proceso de devolución activo para tracking: "
+                + request.getNumeroTracking()));
 
     RegistroEnvio envio = envioRepository.findByNumeroTracking(request.getNumeroTracking())
         .orElseThrow(() -> new EnvioNoEncontradoException(request.getNumeroTracking()));
@@ -123,20 +158,27 @@ public class DevolucionServiceImpl implements IDevolucionService {
     envioRepository.save(envio);
     devolucion = devolucionRepository.save(devolucion);
 
-    return mapToDTO(devolucion, envio, "Resolución de devolución registrada: " + dec);
+    return mapToDto(devolucion, envio, "Resolución de devolución registrada: " + dec);
   }
 
+  /**
+   * Lista todas las devoluciones registradas.
+   *
+   * @return Lista de DTOs de devoluciones.
+   */
   @Override
   public List<DevolucionResponseDTO> listarDevoluciones() {
     return devolucionRepository.findAll().stream()
         .map(dev -> {
-          RegistroEnvio envio = envioRepository.findByNumeroTracking(dev.getNumeroTracking()).orElse(null);
-          return mapToDTO(dev, envio, "Listado de devolución");
+          RegistroEnvio envio = envioRepository.findByNumeroTracking(
+              dev.getNumeroTracking()).orElse(null);
+          return mapToDto(dev, envio, "Listado de devolución");
         })
         .collect(Collectors.toList());
   }
 
-  private DevolucionResponseDTO mapToDTO(DevolucionEnvio dev, RegistroEnvio envio, String mensaje) {
+  private DevolucionResponseDTO mapToDto(
+      DevolucionEnvio dev, RegistroEnvio envio, String mensaje) {
     String remitenteNombre = null;
     String remitenteCorreo = null;
     String remitenteTelefono = null;
@@ -145,7 +187,8 @@ public class DevolucionServiceImpl implements IDevolucionService {
 
     if (envio != null) {
       if (envio.getRemitente() != null) {
-        remitenteNombre = envio.getRemitente().getNombres() + " " + envio.getRemitente().getApellidos();
+        remitenteNombre = envio.getRemitente().getNombres() + " "
+            + envio.getRemitente().getApellidos();
         remitenteCorreo = envio.getRemitente().getCorreo();
         remitenteTelefono = envio.getRemitente().getTelefono();
       }

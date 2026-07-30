@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * DTO de solicitud para registrar la recepción física de un paquete devuelto en almacén.
+ */
 @Data
 @Builder
 @NoArgsConstructor

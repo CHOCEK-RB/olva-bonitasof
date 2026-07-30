@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * DTO de solicitud para registrar un intento fallido de entrega de un paquete.
+ */
 @Data
 @Builder
 @NoArgsConstructor
