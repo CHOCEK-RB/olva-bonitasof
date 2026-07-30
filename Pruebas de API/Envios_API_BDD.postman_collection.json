@@ -266,6 +266,166 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Gestión de Devoluciones y Reenvíos",
+      "item": [
+        {
+          "name": "GIVEN tracking valido WHEN registrar intento fallido THEN retorna estado INTENTO_FALLIDO",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numeroTracking\": \"{{numero_tracking}}\",\n  \"motivo\": \"Ausencia del cliente\",\n  \"observaciones\": \"No se encontró al cliente\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/devoluciones/intento-fallido",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "devoluciones",
+                "intento-fallido"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GIVEN paquete devuelto en almacen WHEN recepcionar y verificar THEN retorna estado EN_ALMACEN",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numeroTracking\": \"{{numero_tracking}}\",\n  \"zonaAlmacen\": \"ZONA-ESPERA-A1\",\n  \"observaciones\": \"Verificado en almacén\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/devoluciones/recepcion-almacen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "devoluciones",
+                "recepcion-almacen"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GIVEN tracking registrado WHEN consultar devolucion THEN retorna datos del remitente y paquete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/devoluciones/{{numero_tracking}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "devoluciones",
+                "{{numero_tracking}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GIVEN decision de remitente WHEN registrar resolucion THEN actualiza estado final",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numeroTracking\": \"{{numero_tracking}}\",\n  \"decision\": \"REINTENTO\",\n  \"observaciones\": \"Reprogramar entrega\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/devoluciones/resolucion",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "devoluciones",
+                "resolucion"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [
