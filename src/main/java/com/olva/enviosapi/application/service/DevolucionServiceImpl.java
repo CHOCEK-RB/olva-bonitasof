@@ -59,7 +59,7 @@ public class DevolucionServiceImpl implements IDevolucionService {
   @Override
   public DevolucionResponseDTO recepcionarEnAlmacen(RecepcionAlmacenRequestDTO request) {
     DevolucionEnvio devolucion = devolucionRepository.findByNumeroTracking(request.getNumeroTracking())
-        .orElseThrow(() -> new RuntimeException("Paquete incorrecto o no registrado para devolución: " + request.getNumeroTracking()));
+        .orElseThrow(() -> new EnvioNoEncontradoException("Paquete incorrecto o no registrado para devolución: " + request.getNumeroTracking()));
 
     RegistroEnvio envio = envioRepository.findByNumeroTracking(request.getNumeroTracking())
         .orElseThrow(() -> new EnvioNoEncontradoException(request.getNumeroTracking()));
@@ -79,7 +79,7 @@ public class DevolucionServiceImpl implements IDevolucionService {
   @Override
   public DevolucionResponseDTO consultarPorTracking(String numeroTracking) {
     DevolucionEnvio devolucion = devolucionRepository.findByNumeroTracking(numeroTracking)
-        .orElseThrow(() -> new RuntimeException("No existe registro de devolución para el tracking: " + numeroTracking));
+        .orElseThrow(() -> new EnvioNoEncontradoException("No existe registro de devolución para el tracking: " + numeroTracking));
 
     RegistroEnvio envio = envioRepository.findByNumeroTracking(numeroTracking)
         .orElseThrow(() -> new EnvioNoEncontradoException(numeroTracking));
@@ -90,7 +90,7 @@ public class DevolucionServiceImpl implements IDevolucionService {
   @Override
   public DevolucionResponseDTO registrarResolucion(ResolucionDevolucionRequestDTO request) {
     DevolucionEnvio devolucion = devolucionRepository.findByNumeroTracking(request.getNumeroTracking())
-        .orElseThrow(() -> new RuntimeException("No se encontró proceso de devolución activo para tracking: " + request.getNumeroTracking()));
+        .orElseThrow(() -> new EnvioNoEncontradoException("No se encontró proceso de devolución activo para tracking: " + request.getNumeroTracking()));
 
     RegistroEnvio envio = envioRepository.findByNumeroTracking(request.getNumeroTracking())
         .orElseThrow(() -> new EnvioNoEncontradoException(request.getNumeroTracking()));

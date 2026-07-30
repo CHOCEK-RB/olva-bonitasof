@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/devoluciones")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class DevolucionController {
 
