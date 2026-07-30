@@ -5,7 +5,7 @@
   "type" : "form",
   "uuid" : "02cad2c9-8dd9-46e6-a266-148e835231db",
   "modelVersion" : "2.6",
-  "lastUpdate" : 1782033690006,
+  "lastUpdate" : 1785393535131,
   "description" : "Page generated with Bonita UI designer",
   "rows" : [
     [
@@ -400,39 +400,23 @@
                     {
                       "type" : "component",
                       "dimension" : {
-                        "md" : 12,
-                        "sm" : 12,
                         "xs" : 12,
+                        "sm" : 12,
+                        "md" : 12,
                         "lg" : 12
                       },
                       "propertyValues" : {
-                        "labelHidden" : {
+                        "cssClasses" : {
                           "type" : "constant",
-                          "value" : false
+                          "value" : ""
                         },
                         "hidden" : {
                           "type" : "constant",
                           "value" : false
                         },
-                        "cssClasses" : {
-                          "type" : "constant",
-                          "value" : ""
-                        },
                         "disabled" : {
                           "type" : "constant",
                           "value" : true
-                        },
-                        "label" : {
-                          "type" : "interpolation",
-                          "value" : "Tiene Seguro"
-                        },
-                        "dimension" : {
-                          "type" : "constant",
-                          "value" : 12
-                        },
-                        "value" : {
-                          "type" : "variable",
-                          "value" : "reclamoVar.tieneSeguro"
                         },
                         "required" : {
                           "type" : "constant",
@@ -441,12 +425,19 @@
                         "allowHTML" : {
                           "type" : "constant",
                           "value" : false
+                        },
+                        "label" : {
+                          "type" : "interpolation",
+                          "value" : "Tiene Boleta"
+                        },
+                        "value" : {
+                          "type" : "variable",
+                          "value" : "reclamoVar.tieneBoleta"
                         }
                       },
-                      "reference" : "9084c264-8fee-4d61-b5ca-30c3d11ddd21",
+                      "reference" : "d73be917-7b62-476c-8765-b1f30fdf531d",
                       "hasValidationError" : false,
-                      "id" : "pbCheckbox",
-                      "description" : ""
+                      "id" : "pbCheckbox"
                     }
                   ]
                 ]
@@ -520,6 +511,144 @@
               "reference" : "208129e6-c2fd-458c-9acb-4ce27f8f6920",
               "hasValidationError" : false,
               "id" : "pbTitle"
+            }
+          ],
+          [
+            {
+              "type" : "component",
+              "dimension" : {
+                "xs" : 12,
+                "sm" : 12,
+                "md" : 12,
+                "lg" : 12
+              },
+              "propertyValues" : {
+                "cssClasses" : {
+                  "type" : "constant",
+                  "value" : ""
+                },
+                "hidden" : {
+                  "type" : "constant",
+                  "value" : false
+                },
+                "required" : {
+                  "type" : "constant",
+                  "value" : false
+                },
+                "allowHTML" : {
+                  "type" : "constant",
+                  "value" : false
+                },
+                "minLength" : {
+                  "type" : "constant",
+                  "value" : ""
+                },
+                "maxLength" : {
+                  "type" : "constant",
+                  "value" : ""
+                },
+                "readOnly" : {
+                  "type" : "constant",
+                  "value" : false
+                },
+                "labelHidden" : {
+                  "type" : "constant",
+                  "value" : false
+                },
+                "label" : {
+                  "type" : "interpolation",
+                  "value" : "Valor del Flete"
+                },
+                "labelPosition" : {
+                  "type" : "constant",
+                  "value" : "top"
+                },
+                "labelWidth" : {
+                  "type" : "constant",
+                  "value" : 4
+                },
+                "placeholder" : {
+                  "type" : "interpolation"
+                },
+                "value" : {
+                  "type" : "variable",
+                  "value" : "reclamoVar.flete"
+                },
+                "debounce" : {
+                  "type" : "constant",
+                  "value" : 0
+                },
+                "type" : {
+                  "type" : "constant",
+                  "value" : "text"
+                },
+                "min" : {
+                  "type" : "constant"
+                },
+                "max" : {
+                  "type" : "constant"
+                },
+                "step" : {
+                  "type" : "constant",
+                  "value" : 1
+                }
+              },
+              "reference" : "9523d1dd-0ee1-42ac-80ba-4b89c71b182d",
+              "hasValidationError" : false,
+              "id" : "pbInput"
+            }
+          ],
+          [
+            {
+              "type" : "component",
+              "dimension" : {
+                "md" : 12,
+                "sm" : 12,
+                "xs" : 12,
+                "lg" : 12
+              },
+              "propertyValues" : {
+                "labelHidden" : {
+                  "type" : "constant",
+                  "value" : false
+                },
+                "hidden" : {
+                  "type" : "constant",
+                  "value" : false
+                },
+                "cssClasses" : {
+                  "type" : "constant",
+                  "value" : ""
+                },
+                "disabled" : {
+                  "type" : "constant",
+                  "value" : false
+                },
+                "label" : {
+                  "type" : "interpolation",
+                  "value" : "Tiene Seguro"
+                },
+                "dimension" : {
+                  "type" : "constant",
+                  "value" : 12
+                },
+                "value" : {
+                  "type" : "variable",
+                  "value" : "reclamoVar.tieneSeguro"
+                },
+                "required" : {
+                  "type" : "constant",
+                  "value" : false
+                },
+                "allowHTML" : {
+                  "type" : "constant",
+                  "value" : false
+                }
+              },
+              "reference" : "9084c264-8fee-4d61-b5ca-30c3d11ddd21",
+              "hasValidationError" : false,
+              "id" : "pbCheckbox",
+              "description" : ""
             }
           ],
           [
@@ -778,7 +907,9 @@
         "\treturn {",
         "\t\t//map reclamoVar variable to expected task contract input",
         "\t\treclamoVarInput: {",
-        "\t\t\tarticuloProhibido: $data.reclamoVar.articuloProhibido !== undefined ? $data.reclamoVar.articuloProhibido : null",
+        "\t\t\tarticuloProhibido: $data.reclamoVar.articuloProhibido !== undefined ? $data.reclamoVar.articuloProhibido : null,",
+        "\t\t\ttieneSeguro: $data.reclamoVar.tieneSeguro !== undefined ? $data.reclamoVar.tieneSeguro : false,",
+        "\t\t\tflete: $data.reclamoVar.flete ? parseFloat($data.reclamoVar.flete) : 0.0",
         "\t\t}",
         "\t}",
         "}"

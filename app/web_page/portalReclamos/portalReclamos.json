@@ -5,7 +5,7 @@
   "type" : "form",
   "uuid" : "648f5088-29e1-40ee-abf7-6b420de32af8",
   "modelVersion" : "2.6",
-  "lastUpdate" : 1782243981382,
+  "lastUpdate" : 1785389264524,
   "description" : "Page generated with Bonita UI designer",
   "rows" : [
     [
@@ -547,7 +547,8 @@
                           "value" : "¿Tiene Boleta?"
                         },
                         "value" : {
-                          "type" : "variable"
+                          "type" : "variable",
+                          "value" : "formInput.reclamoVarInput.tieneBoleta"
                         }
                       },
                       "reference" : "abd8179b-74fc-4d81-9e89-8f70b4bba508",

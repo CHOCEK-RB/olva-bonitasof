@@ -5,7 +5,7 @@
   "type" : "form",
   "uuid" : "1ce3701e-f694-49f8-ad89-b411c00117cf",
   "modelVersion" : "2.6",
-  "lastUpdate" : 1782037505431,
+  "lastUpdate" : 1785391709458,
   "description" : "Page generated with Bonita UI designer",
   "rows" : [
     [
@@ -95,7 +95,7 @@
                 },
                 "text" : {
                   "type" : "interpolation",
-                  "value" : "<b>Número de Tracking:</b> {{reclamoVar.numeroTracking}} <br>\n<b>Valor Declarado por el Cliente:</b> S/ {{reclamoVar.valorDeclarado}}"
+                  "value" : "<b>Número de Tracking:</b> {{reclamoVar.numeroTracking}} <br>\n<b>Valor Declarado por el Cliente:</b> S/ {{reclamoVar.valorDeclarado}} <br>\n<b>Valor Declarado de Flete:</b> S/ {{reclamoVar.flete}} <br>"
                 },
                 "alignment" : {
                   "type" : "constant",
