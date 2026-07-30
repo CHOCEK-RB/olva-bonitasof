@@ -23,6 +23,8 @@ El microservicio actúa como un actor dentro del ecosistema orquestado por Bonit
 2. El microservicio procesa el cálculo y la lógica de negocio correspondiente.
 3. Al finalizar, publica la respuesta en la cola de salida (`reclamos.compensacion.respuesta.queue`) para notificar al BPM y continuar el flujo del proceso de negocio.
 
+<img src="proceso.png" width="900" alt="Diagrama BPMN: Proceso de Compensación">
+
 ## 3. Arquitectura y Tecnologías
 
 - **Lenguaje:** Java 17
