@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "Envios API (Proceso Distribucion) - Con Tests",
-    "description": "Colección de pruebas automatizadas para la API REST basada en DDD.",
+    "name": "Envios API (Proceso Distribucion) - Con Tests Completos",
+    "description": "Colección de pruebas automatizadas Postman para la API REST basada en DDD e integración con Bonita BPM y RabbitMQ.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -55,7 +55,50 @@
       "response": []
     },
     {
-      "name": "2. Tarea: Cargar Mercancía",
+      "name": "2. Solicitar Recursos Asíncrono (RabbitMQ)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 202 Accepted\", function () {",
+              "    pm.response.to.have.status(202);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/manifiestos/MAN-2026-001/recursos/solicitar",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "manifiestos",
+            "MAN-2026-001",
+            "recursos",
+            "solicitar"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Tarea: Cargar Mercancía",
       "event": [
         {
           "listen": "test",
@@ -106,7 +149,7 @@
       "response": []
     },
     {
-      "name": "3. Tarea: Registrar Recepción",
+      "name": "4. Tarea: Registrar Recepción",
       "event": [
         {
           "listen": "test",
@@ -157,7 +200,7 @@
       "response": []
     },
     {
-      "name": "4. Tarea Excepción: Registrar Novedad",
+      "name": "5. Tarea Excepción: Registrar Novedad",
       "event": [
         {
           "listen": "test",
@@ -202,6 +245,83 @@
             "manifiestos",
             "MAN-2026-001",
             "novedades"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "6. Consulta: Listar Todos los Manifiestos",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Respuesta es un Array JSON\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(Array.isArray(jsonData)).to.be.true;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/manifiestos",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "manifiestos"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "7. Consulta: Obtener Manifiesto Específico",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code es 200 OK\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Contiene el codigoManifiesto correcto\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.codigoManifiesto).to.eql(\"MAN-2026-001\");",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/manifiestos/MAN-2026-001",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "manifiestos",
+            "MAN-2026-001"
           ]
         }
       },
