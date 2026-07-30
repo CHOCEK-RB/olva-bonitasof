@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/almacen")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class AlmacenController {
 

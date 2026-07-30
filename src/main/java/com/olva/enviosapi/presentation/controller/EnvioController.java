@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/envios")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class EnvioController {
 
