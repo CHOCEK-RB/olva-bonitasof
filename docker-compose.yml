@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: olva-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"   # Puerto AMQP para Spring Boot
+      - "15672:15672" # Puerto de la interfaz web
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  mariadb:
+    image: mariadb:10.11
+    container_name: olva-mariadb
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: distribuciondb
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  rabbitmq_data:
+  mariadb_data:
