@@ -1,20 +1,25 @@
 package com.olva.enviosapi.application.service;
 
-import org.springframework.beans.factory.annotation.Value;
-
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
+/**
+ * Servicio encargado de la comunicación HTTP con la API REST de BonitaSoft (BPM).
+ */
 @Service
 public class BonitaService {
 
@@ -32,13 +37,19 @@ public class BonitaService {
   @Value("${bonita.api.process.name}")
   private String processName;
 
+  /**
+   * Constructor que inicializa el cliente RestTemplate.
+   */
   public BonitaService() {
     this.restTemplate = new RestTemplate();
   }
 
+  /**
+   * Autentica el usuario en BonitaSoft e instancia el proceso de clasificación de carga.
+   *
+   * @param tracking Número de seguimiento del envío a procesar.
+   */
   public void instanciarProceso(String tracking) {
-    String loginUrl = bonitaUrl + "/loginservice";
-
     HttpHeaders loginHeaders = new HttpHeaders();
     loginHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -47,8 +58,11 @@ public class BonitaService {
     loginBody.add("password", password);
     loginBody.add("redirect", "false");
 
-    HttpEntity<MultiValueMap<String, String>> loginRequest = new HttpEntity<>(loginBody, loginHeaders);
-    ResponseEntity<String> loginResponse = restTemplate.postForEntity(loginUrl, loginRequest, String.class);
+    HttpEntity<MultiValueMap<String, String>> loginRequest =
+        new HttpEntity<>(loginBody, loginHeaders);
+    String loginUrl = bonitaUrl + "/loginservice";
+    ResponseEntity<String> loginResponse =
+        restTemplate.postForEntity(loginUrl, loginRequest, String.class);
 
     List<String> cookies = loginResponse.getHeaders().get(HttpHeaders.SET_COOKIE);
     if (cookies == null || cookies.isEmpty()) {
@@ -76,16 +90,14 @@ public class BonitaService {
     apiHeaders.setContentType(MediaType.APPLICATION_JSON);
 
     HttpEntity<Void> searchRequest = new HttpEntity<>(null, apiHeaders);
-    ResponseEntity<List<Map<String, Object>>> searchResponse = restTemplate.exchange(
-        searchProcessUrl,
-        HttpMethod.GET,
-        searchRequest,
-        new ParameterizedTypeReference<List<Map<String, Object>>>() {
-        });
+    ResponseEntity<List<Map<String, Object>>> searchResponse =
+        restTemplate.exchange(searchProcessUrl, HttpMethod.GET, searchRequest,
+            new ParameterizedTypeReference<List<Map<String, Object>>>() {});
 
     List<Map<String, Object>> procesos = searchResponse.getBody();
     if (procesos == null || procesos.isEmpty()) {
-      throw new RuntimeException("No se encontró el proceso " + processName + " desplegado en Bonita.");
+      throw new RuntimeException(
+          "No se encontró el proceso " + processName + " desplegado en Bonita.");
     }
 
     String processId = String.valueOf(procesos.get(0).get("id"));
@@ -98,6 +110,7 @@ public class BonitaService {
     HttpEntity<Map<String, String>> instanciateRequest = new HttpEntity<>(contract, apiHeaders);
     restTemplate.postForEntity(instanciateUrl, instanciateRequest, String.class);
 
-    System.out.println("✅ Proceso de Almacen instanciado correctamente en Bonita para el tracking: " + tracking);
+    System.out.println(
+        "✅ Proceso de Almacen instanciado correctamente en Bonita para tracking: " + tracking);
   }
 }

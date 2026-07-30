@@ -4,7 +4,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -12,6 +11,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Entidad JPA que representa a la persona cliente (remitente o destinatario) vinculada a un envío.
+ */
 @Entity
 @Data
 @Builder
@@ -26,7 +28,8 @@ public class Cliente {
   private String tipoDocumento;
 
   @NotBlank(message = "El numero de documento es obligatorio")
-  @Pattern(regexp = "^[0-9]{8,12}$", message = "El numero de documento debe tener entre 8 y 12 digitos")
+  @Pattern(regexp = "^[0-9]{8,12}$",
+      message = "El numero de documento debe tener entre 8 y 12 digitos")
   private String numeroDocumento;
 
   @NotBlank(message = "El nombre es obligatorio")
@@ -35,11 +38,6 @@ public class Cliente {
   @NotBlank(message = "Los apellidos son obligatorios")
   private String apellidos;
 
-  @NotBlank(message = "El telefono es obligatorio")
-  @Pattern(regexp = "^\\d{9}$", message = "El telefono debe tener exactamente 9 digitos")
   private String telefono;
-
-  @NotBlank(message = "El correo es obligatorio")
-  @Email(message = "El correo no tiene un formato valido")
-  private String correo;
+  private String email;
 }

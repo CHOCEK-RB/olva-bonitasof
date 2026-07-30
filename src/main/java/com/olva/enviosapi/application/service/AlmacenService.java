@@ -5,12 +5,14 @@ import com.olva.enviosapi.domain.model.LoteDespacho;
 import com.olva.enviosapi.domain.model.RegistroEnvio;
 import com.olva.enviosapi.domain.repository.ILoteDespachoRepository;
 import com.olva.enviosapi.domain.repository.IRegistroEnvioRepository;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
+/**
+ * Servicio de negocio para la gestión de operaciones de almacén y clasificación de carga.
+ */
 @Service
 @RequiredArgsConstructor
 public class AlmacenService {
@@ -18,6 +20,12 @@ public class AlmacenService {
   private final IRegistroEnvioRepository envioRepository;
   private final ILoteDespachoRepository loteRepository;
 
+  /**
+   * Clasifica un envío según su ruta de destino y lo asigna a un lote de despacho abierto.
+   *
+   * @param numeroTracking Número de seguimiento del envío a clasificar.
+   * @return El ID del lote de despacho asignado o creado.
+   */
   public String clasificarEnvio(String numeroTracking) {
     RegistroEnvio envio = envioRepository.findByNumeroTracking(numeroTracking)
         .orElseThrow(() -> new EnvioNoEncontradoException(numeroTracking));

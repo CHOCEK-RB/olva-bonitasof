@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.olva.enviosapi.application.dto.EnvioRequestDTO;
@@ -16,6 +15,7 @@ import com.olva.enviosapi.application.excepcion.EnvioNoEncontradoException;
 import com.olva.enviosapi.domain.model.*;
 import com.olva.enviosapi.domain.repository.IRegistroEnvioRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -43,18 +43,12 @@ class EnvioServiceImplTest {
     EnvioRequestDTO request = new EnvioRequestDTO();
     request.setTipoPago("Fisico");
 
-    Paquete paquete = Paquete.builder()
-        .peso(2.5)
-        .valorDeclarado(100.0)
-        .build();
+    Paquete paquete = Paquete.builder().peso(2.5).valorDeclarado(100.0).build();
     request.setDatosPaquete(paquete);
     request.setRemitente(new Cliente());
 
-    RegistroEnvio mockEnvio = RegistroEnvio.builder()
-        .id("12345")
-        .estado(EstadoEnvio.PENDIENTE)
-        .montoTotal(13.5)
-        .build();
+    RegistroEnvio mockEnvio =
+        RegistroEnvio.builder().id("12345").estado(EstadoEnvio.PENDIENTE).montoTotal(13.5).build();
 
     when(repository.save(any(RegistroEnvio.class))).thenReturn(mockEnvio);
 
@@ -68,11 +62,8 @@ class EnvioServiceImplTest {
   @Test
   void confirmarPago_CuandoExiste_DeberiaActualizarBanderaYRetornarResponse() {
     String envioId = "12345";
-    RegistroEnvio mockEnvio = RegistroEnvio.builder()
-        .id(envioId)
-        .pagoConfirmado(false)
-        .estado(EstadoEnvio.PENDIENTE)
-        .build();
+    RegistroEnvio mockEnvio = RegistroEnvio.builder().id(envioId).pagoConfirmado(false)
+        .estado(EstadoEnvio.PENDIENTE).build();
 
     when(repository.findById(envioId)).thenReturn(Optional.of(mockEnvio));
     when(repository.save(any(RegistroEnvio.class))).thenReturn(mockEnvio);
@@ -90,7 +81,7 @@ class EnvioServiceImplTest {
     when(repository.findById(idFalso)).thenReturn(Optional.empty());
 
     assertThrows(com.olva.enviosapi.application.excepcion.EnvioNoEncontradoException.class, () -> {
-        envioService.confirmarPago(idFalso);
+      envioService.confirmarPago(idFalso);
     });
   }
 
@@ -108,11 +99,9 @@ class EnvioServiceImplTest {
     paquete.setDireccionOrigen("Arequipa");
     paquete.setDireccionDestino("Lima");
     envioExistente.setDatosPaquete(paquete);
-    envioExistente.setUbicacionActual("Centro de distribución - Ica");
-    envioExistente.setFechaEntregaEstimada(LocalDateTime.of(2026, 7, 24, 18, 0));
+    envioExistente.setFechaRegistro(LocalDate.of(2026, 7, 21));
 
-    when(repository.findByNumeroTracking(numeroTracking))
-        .thenReturn(Optional.of(envioExistente));
+    when(repository.findByNumeroTracking(numeroTracking)).thenReturn(Optional.of(envioExistente));
 
     // ---------- WHEN (Acción / caso de uso ejecutado) ----------
     EnvioTrackingResponse resultado = envioService.consultarEstado(numeroTracking);
@@ -123,8 +112,8 @@ class EnvioServiceImplTest {
     assertEquals(EstadoEnvio.EN_TRANSITO, resultado.getEstado());
     assertEquals("Arequipa", resultado.getOrigen());
     assertEquals("Lima", resultado.getDestino());
-    assertEquals("Centro de distribución - Ica", resultado.getUbicacionActual());
-    assertEquals(LocalDateTime.of(2026, 7, 24, 18, 0), resultado.getFechaEntregaEstimada());
+    assertEquals("En Ruta hacia Centro de Distribución", resultado.getUbicacionActual());
+    assertEquals(LocalDateTime.of(2026, 7, 24, 0, 0), resultado.getFechaEntregaEstimada());
 
     verify(repository, times(1)).findByNumeroTracking(numeroTracking);
   }
@@ -133,11 +122,9 @@ class EnvioServiceImplTest {
   @DisplayName("consultarEstado_CuandoNoExiste_DeberiaLanzarExcepcion")
   void consultarEstado_CuandoNoExiste_DeberiaLanzarExcepcion() {
     String trackingInexistente = "TRK-NO-EXISTE";
-    when(repository.findByNumeroTracking(trackingInexistente))
-        .thenReturn(Optional.empty());
+    when(repository.findByNumeroTracking(trackingInexistente)).thenReturn(Optional.empty());
 
-    assertThrows(
-        EnvioNoEncontradoException.class,
+    assertThrows(EnvioNoEncontradoException.class,
         () -> envioService.consultarEstado(trackingInexistente));
   }
 }
